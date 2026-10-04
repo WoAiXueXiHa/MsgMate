@@ -1,0 +1,398 @@
+openapi: 3.1.0
+info:
+  title: MsgMate 通知服务 API
+  version: 1.0.0
+  description: 现有 HTTP 接口的源码说明。Source-Id 仅标识业务来源，不提供认证。HTTP 200 仍需检查 code；部分 Handler
+    未完整映射内部错误，成功响应不保证投递成功。示例未经真实发送验证。
+servers:
+- url: http://localhost:8081
+  description: 本地开发服务器
+paths:
+  /msg/send_msg:
+    post:
+      summary: 发送消息
+      description: 提交即时或定时通知，模板必须启用；入口配额控制提交速率，未提供提交幂等。Kafka 生产者强制异步模式，不能将返回成功视为 broker
+        持久化确认。
+      operationId: sendMsg
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMsgReq'
+      responses:
+        '200':
+          description: Handler 返回 JSON；需检查业务 code，HTTP 200 不代表投递成功。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendMsgResp'
+      parameters:
+      - name: Source-Id
+        in: header
+        required: false
+        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无认证或所有权校验。
+        schema:
+          type: string
+        example: learnq
+  /msg/get_msg_record:
+    get:
+      summary: 获取消息记录
+      description: 查询记录内容，不能查询投递状态；查询错误可能未映射到业务错误码，不用于轮询送达结果。
+      operationId: getMsgRecord
+      parameters:
+      - name: msgID
+        in: query
+        description: 消息ID
+        required: true
+        schema:
+          type: string
+      - name: Source-Id
+        in: header
+        required: false
+        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无认证或所有权校验。
+        schema:
+          type: string
+        example: learnq
+      responses:
+        '200':
+          description: Handler 返回 JSON；需检查业务 code，HTTP 200 不代表投递成功。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMsgRecordResp'
+  /msg/create_template:
+    post:
+      summary: 创建消息模板
+      description: 创建模板，默认待审核状态 1；需管理员在数据库设为启用状态 2，没有审核 API。
+      operationId: createTemplate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTemplateReq'
+      responses:
+        '200':
+          description: Handler 返回 JSON；需检查业务 code，HTTP 200 不代表投递成功。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTemplateResp'
+      parameters:
+      - name: Source-Id
+        in: header
+        required: false
+        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无认证或所有权校验。
+        schema:
+          type: string
+        example: learnq
+  /msg/get_template:
+    get:
+      summary: 获取模板信息
+      description: 通过模板ID获取模板详细信息
+      operationId: getTemplate
+      parameters:
+      - name: templateID
+        in: query
+        description: 模板ID
+        required: true
+        schema:
+          type: string
+      - name: Source-Id
+        in: header
+        required: false
+        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无认证或所有权校验。
+        schema:
+          type: string
+        example: learnq
+      responses:
+        '200':
+          description: Handler 返回 JSON；需检查业务 code，HTTP 200 不代表投递成功。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTemplateResp'
+  /msg/update_template:
+    post:
+      summary: 更新模板
+      description: 更新完整模板字段，省略正文、主题或渠道可能清空对应值；不提供状态启用和版本隔离。
+      operationId: updateTemplate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTemplateReq'
+      responses:
+        '200':
+          description: Handler 返回 JSON；需检查业务 code，HTTP 200 不代表投递成功。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateTemplateResp'
+      parameters:
+      - name: Source-Id
+        in: header
+        required: false
+        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无认证或所有权校验。
+        schema:
+          type: string
+        example: learnq
+  /msg/del_template:
+    post:
+      summary: 删除模板
+      description: 删除模板，不检查在途消息依赖；不保证同步清除模板缓存。
+      operationId: delTemplate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DelTemplateReq'
+      responses:
+        '200':
+          description: Handler 返回 JSON；需检查业务 code，HTTP 200 不代表投递成功。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DelTemplateResp'
+      parameters:
+      - name: Source-Id
+        in: header
+        required: false
+        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无认证或所有权校验。
+        schema:
+          type: string
+        example: learnq
+components:
+  schemas:
+    RespComm:
+      type: object
+      description: 通用响应结构
+      properties:
+        code:
+          type: integer
+          description: 业务错误码，0 为 Handler 成功；部分内部错误未正确映射，不构成投递保证。
+        msg:
+          type: string
+          description: 响应消息
+    SendMsgReq:
+      type: object
+      description: 发送消息请求
+      required:
+      - to
+      - templateID
+      - templateData
+      properties:
+        to:
+          type: string
+          description: 邮件地址或飞书 open_id，由模板渠道决定。
+        subject:
+          type: string
+          description: 可选记录字段；实际发送主题取自模板，不覆盖模板主题。
+        priority:
+          type: integer
+          description: 业务使用 0/1/2/3；省略或 0 默认低优先级 1，中 2，高 3。4 保留内部重试，不是业务提交选项；源码未完整验证枚举。
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          default: 1
+        templateID:
+          type: string
+          description: 模板ID
+        templateData:
+          type: object
+          additionalProperties:
+            type: string
+          description: 正文的字符串参数映射，Go text/template 语法，例如 {{.title}}；无变量时传空对象。
+        sendTimestamp:
+          type: integer
+          format: int64
+          description: Unix 秒级时间戳；正数进入定时任务流程，即时发送省略或填 0。建议填写未来时间，源码未完整校验。
+          minimum: 0
+      example:
+        to: recipient@example.com
+        templateID: <templateID>
+        priority: 2
+        templateData:
+          name: 同学
+          title: Go Channel
+    SendMsgResp:
+      type: object
+      description: 提交结果，msgID 为服务端生成的关联 ID，不是幂等键。成功不等于持久化确认、渠道接受或用户收到。
+      allOf:
+      - $ref: '#/components/schemas/RespComm'
+      - type: object
+        properties:
+          msgID:
+            type: string
+            description: 消息ID
+    GetMsgRecordReq:
+      type: object
+      description: 获取消息记录请求
+      required:
+      - msgID
+      properties:
+        msgID:
+          type: string
+          description: 消息ID
+    GetMsgRecordResp:
+      type: object
+      description: 记录内容，没有 status 或 retry_count。当前 Handler 未填充 to，其值为空。定时任务进入普通队列前可能无记录。
+      allOf:
+      - $ref: '#/components/schemas/RespComm'
+      - type: object
+        properties:
+          to:
+            type: string
+            description: 当前 Handler 未赋值，响应为空字符串。
+          subject:
+            type: string
+            description: 消息主题
+          templateID:
+            type: string
+            description: 模板ID
+          templateData:
+            type: object
+            additionalProperties:
+              type: string
+            description: 模板数据
+    CreateTemplateReq:
+      type: object
+      description: 创建模板请求
+      required:
+      - sourceID
+      - name
+      - subject
+      - channel
+      - content
+      properties:
+        sourceID:
+          type: string
+          description: 源ID
+        name:
+          type: string
+          description: 模板名称
+        subject:
+          type: string
+          description: 主题
+        signName:
+          type: string
+          description: 签名名称
+        channel:
+          type: integer
+          description: 1 邮件，2 短信（保留适配），3 飞书；个人接入使用 1 或 3
+          enum:
+          - 1
+          - 2
+          - 3
+        content:
+          type: string
+          description: 模板内容
+      example:
+        sourceID: learnq
+        name: learning-reminder-email
+        subject: 学习提醒
+        channel: 1
+        content: '{{.name}}，请复习：{{.title}}'
+    CreateTemplateResp:
+      type: object
+      description: 创建模板响应
+      allOf:
+      - $ref: '#/components/schemas/RespComm'
+      - type: object
+        properties:
+          templateID:
+            type: string
+            description: 模板ID
+    GetTemplateReq:
+      type: object
+      description: 获取模板请求
+      required:
+      - templateID
+      properties:
+        templateID:
+          type: string
+          description: 模板ID
+    GetTemplateResp:
+      type: object
+      description: 模板内容；不包含模板状态。
+      allOf:
+      - $ref: '#/components/schemas/RespComm'
+      - type: object
+        properties:
+          relTemplateID:
+            type: string
+            description: 关联模板ID
+          sourceID:
+            type: string
+            description: 源ID
+          signName:
+            type: string
+            description: 签名名称
+          name:
+            type: string
+            description: 模板名称
+          subject:
+            type: string
+            description: 主题
+          channel:
+            type: integer
+            description: 渠道
+            enum:
+            - 1
+            - 2
+            - 3
+          content:
+            type: string
+            description: 模板内容
+    UpdateTemplateReq:
+      type: object
+      description: 更新模板。templateID 必填；当前实现会覆盖正文、主题、渠道，应提交完整字段，不按 PATCH 使用。
+      required:
+      - templateID
+      properties:
+        templateID:
+          type: string
+          description: 模板ID
+        name:
+          type: string
+          description: 模板名称
+        sourceID:
+          type: string
+          description: 源ID
+        subject:
+          type: string
+          description: 主题
+        channel:
+          type: integer
+          description: 渠道
+          enum:
+          - 1
+          - 2
+          - 3
+        content:
+          type: string
+          description: 模板内容
+    UpdateTemplateResp:
+      type: object
+      description: 更新模板响应
+      allOf:
+      - $ref: '#/components/schemas/RespComm'
+    DelTemplateReq:
+      type: object
+      description: 删除模板请求
+      required:
+      - templateID
+      properties:
+        templateID:
+          type: string
+          description: 模板ID
+    DelTemplateResp:
+      type: object
+      description: 删除模板响应
+      allOf:
+      - $ref: '#/components/schemas/RespComm'
