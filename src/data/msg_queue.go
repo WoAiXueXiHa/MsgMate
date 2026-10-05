@@ -30,7 +30,7 @@ func (p *MsgQueue) TableName() string {
 // Find 查找记录
 func (p *MsgQueue) Find(db *gorm.DB, priorityStr string, msgID string) (*MsgQueue, error) {
 	var data = &MsgQueue{}
-	err := db.Table(p.TableName() + "_" + priorityStr).Where("msg_id= ?", msgID).First(data).Error
+	err := db.Table(p.TableName()+"_"+priorityStr).Where("msg_id= ?", msgID).First(data).Error
 	return data, err
 }
 

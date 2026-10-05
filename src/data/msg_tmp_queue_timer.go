@@ -46,6 +46,7 @@ func (p *MsgTmpQueueTimer) GetOnTimeMsgList(db *gorm.DB, status int, now int64) 
 		Table(p.TableName()).
 		Where("send_timestamp <= ?", now).
 		Where("status = ?", status).
+		Order("send_timestamp, id").Limit(60).
 		Find(&msgList).Error
 	if err != nil {
 		return nil, err

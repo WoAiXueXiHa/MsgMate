@@ -27,8 +27,5 @@ func (p *UserQuota) Find(db *gorm.DB, sourceID string, channel int) (*UserQuota,
 
 // Create 创建记录
 func (p *UserQuota) Create(db *gorm.DB, quota *UserQuota) error {
-	var data = &UserQuota{}
-	data = quota
-	err := db.First(data).Error
-	return err
+	return db.Create(quota).Error
 }

@@ -10,14 +10,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BitofferHub/msgcenter/src/config"
-	"github.com/BitofferHub/msgcenter/src/constant"
-	"github.com/BitofferHub/msgcenter/src/ctrl/ctrlmodel"
-	"github.com/BitofferHub/msgcenter/src/ctrl/handler"
-	"github.com/BitofferHub/msgcenter/src/ctrl/tools"
-	"github.com/BitofferHub/msgcenter/src/data"
 	"github.com/BitofferHub/pkg/middlewares/log"
-	"github.com/BitofferHub/pkg/utils"
+	"github.com/WoAiXueXiHa/MsgMate/src/config"
+	"github.com/WoAiXueXiHa/MsgMate/src/constant"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/ctrlmodel"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/handler"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/tools"
+	"github.com/WoAiXueXiHa/MsgMate/src/data"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -56,20 +55,24 @@ func SendMsg(c *gin.Context) {
 
 // HandleInput 参数检查
 func (p *SendMsgHandler) HandleInput() error {
-	if p.Req.TemplateID == "" {
+	if p.UserId == "" || p.Req.SendTimestamp < 0 || p.Req.TemplateID == "" {
 		p.Resp.Code = constant.ERR_INPUT_INVALID
-		return nil
+		return constant.ERR_HANDLE_INPUT
 	}
 	if p.Req.TemplateData == nil {
 		p.Resp.Code = constant.ERR_INPUT_INVALID
-		return nil
+		return constant.ERR_HANDLE_INPUT
 	}
 	if p.Req.To == "" {
 		p.Resp.Code = constant.ERR_INPUT_INVALID
-		return nil
+		return constant.ERR_HANDLE_INPUT
 	}
 	if p.Req.Priority == 0 {
 		p.Req.Priority = int(data.PRIORITY_LOW)
+	}
+	if p.Req.Priority < 1 || p.Req.Priority > 3 {
+		p.Resp.Code = constant.ERR_INPUT_INVALID
+		return constant.ERR_HANDLE_INPUT
 	}
 	return nil
 }
@@ -90,7 +93,7 @@ func (p *SendMsgHandler) HandleProcess() error {
 	}
 
 	// 模板状态检查
-	if mt.Status != int(data.TEMPLATE_STATUS_NORMAL) {
+	if mt.Status != int(data.TEMPLATE_STATUS_NORMAL) || mt.SourceID != sourceID {
 		p.Resp.Code = constant.ERR_TEMPLATE_NOT_READY
 		return errors.New("template not ready")
 	}
@@ -101,17 +104,19 @@ func (p *SendMsgHandler) HandleProcess() error {
 		ready      bool
 	)
 
-	quatoCacheKey := fmt.Sprintf("%s%s%d", data.REDIS_KEY_SOURCE_QUOTA, mt.SourceID, mt.Channel)
+	quatoCacheKey := fmt.Sprintf("%s%s:%d", data.REDIS_KEY_SOURCE_QUOTA, sourceID, mt.Channel)
 
 	// 如果缓存开启，则从缓存中获取配额
 	if config.Conf.Common.OpenCache {
 		limitdiv, _, _ := dt.GetCache().Get(ctx, quatoCacheKey)
 		if len(limitdiv) > 0 {
 			ary := strings.Split(limitdiv, "_")
-			limit, _ = strconv.Atoi(ary[0])
-			div, _ = strconv.Atoi(ary[1])
-			log.Infof("quota cache hit %d, %d", limit, div)
-			ready = true
+			if len(ary) == 2 {
+				var e1, e2 error
+				limit, e1 = strconv.Atoi(ary[0])
+				div, e2 = strconv.Atoi(ary[1])
+				ready = e1 == nil && e2 == nil && limit > 0 && div > 0
+			}
 		}
 	}
 
@@ -126,7 +131,8 @@ func (p *SendMsgHandler) HandleProcess() error {
 		}
 		limit = globalQuota.Num
 		div = globalQuota.Unit
-		// 获取业务配额
+		// 业务配额覆盖渠道全局默认值，并非同时扣减两个配额层级。
+		// 计数 key 按来源和渠道隔离，全局配置不是所有业务共享的总量限制。
 		sourceQuota, err := data.SourceQuotaNsp.Find(dt.GetDB(), sourceID, mt.Channel)
 		if err != nil {
 			if err != gorm.ErrRecordNotFound {
@@ -167,203 +173,50 @@ func (p *SendMsgHandler) HandleProcess() error {
 		return nil
 	}
 
-	// 定时消息
+	p.Req.MsgID = data.NewMsgID()
+	p.Resp.MsgID = p.Req.MsgID
+	p.Req.Subject = mt.Subject
+	createRecord := func(tx *gorm.DB) error {
+		return tools.CreateMsgRecord(tx, p.Req.MsgID, &p.Req, mt, int(data.MSG_STATUS_PENDING))
+	}
 	if p.Req.SendTimestamp > 0 {
-		return p.sendToTimer()
+		body, err := json.Marshal(p.Req)
+		if err != nil {
+			return err
+		}
+		err = dt.GetDB().Transaction(func(tx *gorm.DB) error {
+			if err := createRecord(tx); err != nil {
+				return err
+			}
+			return data.MsgTmpQueueTimerNsp.Create(tx, &data.MsgTmpQueueTimer{MsgId: p.Req.MsgID, Req: string(body), SendTimestamp: p.Req.SendTimestamp, Status: int(data.TIMER_MSG_STATUS_PENDING)})
+		})
+		if err != nil {
+			return err
+		}
+		// 任务已持久化到 MySQL；Redis 索引写入失败时，由定时消费者补扫恢复。
+		if _, err = dt.GetCache().ZAdd(ctx, "Timer_Msgs", float64(p.Req.SendTimestamp), fmt.Sprint(p.Req.SendTimestamp)); err != nil {
+			log.Errorf("timer index write failed; database scan will recover")
+		}
+		return nil
 	}
-
-	// 确保消息在响应前持久化
-	var msgErr error
+	// 普通 MySQL 消息记录与入队同时提交，避免消费者先看到队列却查不到记录。
 	if config.Conf.Common.MySQLAsMq {
-		msgErr = p.sendToMySQL()
-	} else {
-		msgErr = p.sendToMQ()
+		return dt.GetDB().Transaction(func(tx *gorm.DB) error {
+			if err := createRecord(tx); err != nil {
+				return err
+			}
+			return data.Enqueue(tx, &p.Req)
+		})
 	}
-
-	status := int(data.MSG_STATUS_PENDING)
-	if msgErr != nil {
-		status = int(data.MSG_STATUS_FAILED)
+	// Kafka 与 MySQL 无法共用事务：先建记录再发布，发布失败尝试标记失败。
+	// 两步之间崩溃仍可能遗留待处理记录，因此没有跨存储原子提交保证。
+	if err := createRecord(dt.GetDB()); err != nil {
+		return err
 	}
-
-	// 创建消息记录，使用户可以立即查询到消息状态
-	err = tools.CreateMsgRecord(dt.GetDB(), p.Resp.MsgID, &p.Req, mt, status)
-	if err != nil {
-		log.Errorf("创建消息记录失败：%s", err.Error())
-		// 即使创建消息记录失败，我们也已经发送了消息到MQ，继续
-	}
-
-	// 如果持久化出错，则返回错误
-	if msgErr != nil {
-		log.Errorf("消息持久化失败: %s", msgErr.Error())
+	if err := dt.Publish(ctx, &p.Req); err != nil {
+		_ = data.MsgRecordNsp.UpdateStatus(dt.GetDB(), p.Req.MsgID, int(data.MSG_STATUS_FAILED))
 		p.Resp.Code = constant.ERR_SEND_MSG
-		return msgErr
-	}
-
-	log.Infof("消息 %s 已成功持久化", p.Resp.MsgID)
-	return nil
-}
-
-// sendToMySQL 将消息发送到MySQL数据库
-func (p *SendMsgHandler) sendToMySQL() error {
-	// 获取数据实例
-	dt := data.GetData()
-
-	// 生成唯一的消息ID
-	msgID := utils.NewUuid()
-
-	// 创建一个新的消息队列实例
-	var md = new(data.MsgQueue)
-
-	// 设置消息的主题
-	md.Subject = p.Req.Subject
-
-	// 设置消息的模板ID
-	md.TemplateID = p.Req.TemplateID
-
-	// 将模板数据转换为JSON格式
-	td, err := json.Marshal(p.Req.TemplateData)
-	if err != nil {
-		p.Resp.Code = constant.ERR_JSON_MARSHAL
 		return err
 	}
-
-	// 设置消息的模板数据
-	md.TemplateData = string(td)
-
-	// 设置消息的接收者
-	md.To = p.Req.To
-
-	// 设置消息的ID
-	md.MsgId = msgID
-
-	// 设置消息的初始状态为待处理状态
-	// 消息状态流转: PENDING -> PROCESSING -> SUCC
-	// 1. 初始状态为PENDING，表示消息已持久化，等待消费
-	// 2. 消费者获取消息后，将状态更新为PROCESSING，表示消息正在处理中
-	// 3. 消息成功处理后，将状态更新为SUCC，表示消息处理完成
-	md.Status = int(data.TASK_STATUS_PENDING)
-
-	// 设置消息的优先级
-	md.Priority = p.Req.Priority
-
-	// 获取消息优先级字符串
-	priorityStr := data.GetPriorityStr(data.PriorityEnum(p.Req.Priority))
-
-	// 将消息插入到MySQL数据库中
-	err = data.MsgQueueNsp.Create(dt.GetDB(), priorityStr, md)
-	if err != nil {
-		p.Resp.Code = constant.ERR_INSERT
-		return err
-	}
-
-	// 将消息ID赋值给响应结构体
-	p.Resp.MsgID = msgID
-
-	// 返回nil，表示发送成功
-	return nil
-}
-
-// sendToMQ 将消息发送到消息队列
-func (p *SendMsgHandler) sendToMQ() error {
-	// 获取数据实例
-	log.Infof("into sendToMQ")
-	dt := data.GetData()
-
-	// 生成唯一的消息ID
-	msgID := utils.NewUuid()
-
-	// 将消息ID赋值给请求结构体
-	p.Req.MsgID = msgID
-	// 将消息ID赋值给响应结构体
-	p.Resp.MsgID = msgID
-
-	// 将请求结构体转换为JSON格式
-	msgJson, err := json.Marshal(p.Req)
-	if err != nil {
-		// 记录错误日志
-		p.Resp.Code = constant.ERR_JSON_MARSHAL
-		log.ErrorContextf(context.Background(), "json marshal err %s", err.Error())
-		return err
-	}
-
-	// 消息队列处理流程：
-	// 1. 消息发送到MQ并持久化
-	// 2. 消费者从MQ获取消息并处理
-	// 3. 处理成功后，消费者会更新MySQL中的消息状态为成功
-
-	var sendErr error
-
-	// 根据消息优先级选择对应的消息队列生产者
-	producer := dt.GetProducer(data.PriorityEnum(p.Req.Priority))
-	sendErr = producer.SendMessage(msgJson)
-	if sendErr != nil {
-		log.ErrorContextf(context.Background(), "发送消息到MQ失败: %s", sendErr.Error())
-		return sendErr
-	}
-
-	log.Infof("消息 %s 已发送到%s优先级队列", msgID, data.GetPriorityStr(data.PriorityEnum(p.Req.Priority)))
-
-	// 返回nil，表示发送成功
-	return nil
-}
-
-// sendToTimer 将消息发送到定时队列
-func (p *SendMsgHandler) sendToTimer() error {
-	// 获取数据实例
-	log.Infof("into sendToTimer")
-	dt := data.GetData()
-	ctx := context.Background()
-
-	// 生成唯一的消息ID
-	msgID := utils.NewUuid()
-
-	// 将消息ID赋值给请求结构体
-	p.Req.MsgID = msgID
-	// 将消息ID赋值给响应结构体
-	p.Resp.MsgID = msgID
-
-	// 将请求结构体转换为JSON格式
-	msgJson, err := json.Marshal(p.Req)
-	if err != nil {
-		// 记录错误日志
-		p.Resp.Code = constant.ERR_JSON_MARSHAL
-		log.ErrorContextf(context.Background(), "json marshal err %s", err.Error())
-		return err
-	}
-
-	// 根据消息优先级选择对应的定时队列 Todo 是否处理优先级？
-	// 存入 MySQL 临时队列；
-	// 创建一个新的消息队列实例
-	var md = new(data.MsgTmpQueueTimer)
-
-	// 设置消息的发送时间
-	md.SendTimestamp = p.Req.SendTimestamp
-
-	// 设置消息
-	md.Req = string(msgJson)
-
-	// 设置消息的ID
-	md.MsgId = msgID
-
-	// 设置消息的初始状态
-	md.Status = int(data.TIMER_MSG_STATUS_PENDING)
-
-	// 将消息插入到MySQL数据库中
-	err = data.MsgTmpQueueTimerNsp.Create(dt.GetDB(), md)
-	if err != nil {
-		p.Resp.Code = constant.ERR_INSERT_TIMER
-		return err
-	}
-
-	// 存入 ZSET；
-	timeSocre := float64(p.Req.SendTimestamp)
-	member := fmt.Sprintf("%d", p.Req.SendTimestamp)
-	_, err = dt.GetCache().ZAdd(ctx, "Timer_Msgs", timeSocre, member)
-	if err != nil {
-		p.Resp.Code = constant.ERR_INSERT_TIMER
-		return err
-	}
-
-	// 返回nil，表示发送成功
 	return nil
 }

@@ -32,6 +32,7 @@ var (
 
 var errMsgDic = map[int]string{
 	SUCCESS:                      "ok",
+	ERR_INTERNAL:                 "internal error",
 	ERR_INPUT_INVALID:            "input invalid",
 	ERR_SHOULD_BIND:              "should bind failed",
 	ERR_JSON_MARSHAL:             "json marshal failed",

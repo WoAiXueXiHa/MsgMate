@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"github.com/BitofferHub/msgcenter/src/ctrl/msg"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/msg"
 	"github.com/gin-gonic/gin"
 )
 

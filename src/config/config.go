@@ -98,7 +98,7 @@ func (c *TomlConfig) LoadConfig(env string) {
 			env = "test"
 		}
 
-		filePath = "../config/config-" + env + ".toml"
+		filePath = "./config/config-" + env + ".toml"
 		if TestFilePath != "" {
 			filePath = TestFilePath
 		}
@@ -131,7 +131,7 @@ func (c *TomlConfig) LoadConfig(env string) {
 }
 
 const (
-	USAGE = "Usage: msgcenter [-e <test|prod>] or [--config <config_file_path>]"
+	USAGE = "Usage: MsgMate [test|prod] or [-config <config_file_path>]"
 )
 
 // GetConfEnv 获取配置的环境变量
@@ -167,7 +167,7 @@ func Init() {
 	log.Init(
 		log.WithLogPath("./log/"),
 		log.WithLogLevel("info"),
-		log.WithFileName("msgcenter.log"),
+		log.WithFileName("msgmate.log"),
 		log.WithMaxBackups(100),
 		log.WithMaxSize(1024*1024*10),
 		log.WithConsole(true),
@@ -180,16 +180,10 @@ func Init() {
 func InitConf(env string) {
 	Conf = new(TomlConfig)
 	Conf.LoadConfig(env)
-	printLog()
-}
-
-func printLog() {
-	log.Infof("======== [Common] ========")
-	log.Infof("%+v", Conf.Common)
-	log.Infof("======== [MySQL] ========")
-	log.Infof("%+v", Conf.MySQL)
-	log.Infof("======== [Redis] ========")
-	log.Infof("%+v", Conf.Redis)
-	log.Infof("======== [Kafka] ========")
-	log.Infof("%+v", Conf.Kafka)
+	if Conf.Common.MaxRetryCount < 0 {
+		panic("max_retry_count must be positive")
+	}
+	if Conf.Common.Port < 1 || Conf.Common.Port > 65535 {
+		panic("invalid port")
+	}
 }

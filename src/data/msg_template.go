@@ -47,6 +47,6 @@ func (p *MsgTemplate) Save(db *gorm.DB, dt *MsgTemplate) error {
 
 func (p *MsgTemplate) Delete(db *gorm.DB, templateID string) error {
 	var dt = new(MsgTemplate)
-	err := db.Delete(dt).Where("template_id = ?", templateID).Limit(1).Error
+	err := db.Where("template_id = ?", templateID).Delete(dt).Error
 	return err
 }

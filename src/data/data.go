@@ -6,16 +6,16 @@ import (
 	"fmt"
 	"time"
 
-	conf "github.com/BitofferHub/msgcenter/src/config"
 	"github.com/BitofferHub/pkg/middlewares/cache"
 	"github.com/BitofferHub/pkg/middlewares/gormcli"
 	"github.com/BitofferHub/pkg/middlewares/log"
 	"github.com/BitofferHub/pkg/middlewares/mq"
+	conf "github.com/WoAiXueXiHa/MsgMate/src/config"
 	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
 )
 
-// Data .
+// Data 汇总数据库、Redis 和各优先级队列的连接，供业务处理与消费者复用。
 type Data struct {
 	db        *gorm.DB
 	rdb       *cache.Client
@@ -28,6 +28,7 @@ var data *Data
 func GetData() *Data {
 	return data
 }
+
 func (p *Data) GetDB() *gorm.DB {
 	return p.db
 }
@@ -36,24 +37,24 @@ func (p *Data) GetCache() *cache.Client {
 	return p.rdb
 }
 
-// GetMsgTemplate retrieves a message template by ID, using cache when available
+// GetMsgTemplate 优先读取可选缓存，未命中时查询 MySQL。
 func (p *Data) GetMsgTemplate(ctx context.Context, templateID string) (*MsgTemplate, error) {
 	var template *MsgTemplate
 
-	// Try to get from cache if enabled
+	// 缓存只用于加速查询；读取失败或内容无效时回退数据库。
 	if conf.Conf.Common.OpenCache {
 		templateCacheKey := p.genTemplateCacheKey(templateID)
 		cacheData, _, _ := p.GetCache().Get(ctx, templateCacheKey)
 		if len(cacheData) > 0 {
 			template = new(MsgTemplate)
 			if err := json.Unmarshal([]byte(cacheData), template); err == nil {
-				log.Infof("template cache hit %+v", template)
+				log.Debugf("template cache hit")
 				return template, nil
 			}
 		}
 	}
 
-	// Cache miss or disabled, retrieve from database
+	// MySQL 是模板数据的真实来源。
 	log.Infof("template cache miss")
 	var err error
 	template, err = MsgTemplateNsp.Find(p.GetDB(), templateID)
@@ -62,7 +63,7 @@ func (p *Data) GetMsgTemplate(ctx context.Context, templateID string) (*MsgTempl
 		return nil, err
 	}
 
-	// Cache the result if enabled
+	// 缓存设置失败不影响本次查询结果，模板更新和删除时主动清理缓存。
 	if conf.Conf.Common.OpenCache {
 		if cacheData, err := json.Marshal(template); err == nil {
 			templateCacheKey := p.genTemplateCacheKey(templateID)
@@ -124,25 +125,38 @@ func (p *Data) GetRetryMQConsumer() mq.Consumer {
 //	@param dt
 //	@return *Data
 //	@return error
-func NewData(cf *conf.TomlConfig) (*Data, error) {
-	fmt.Printf("conf is %+v\n", cf)
+func NewData(cf *conf.TomlConfig) (result *Data, initErr error) {
+	defer func() {
+		if r := recover(); r != nil {
+			result = nil
+			initErr = fmt.Errorf("dependency initialization failed: %v", r)
+		}
+	}()
+
 	gormcli.Init(
 		gormcli.WithAddr(cf.MySQL.Url),
 		gormcli.WithUser(cf.MySQL.User),
 		gormcli.WithPassword(cf.MySQL.Pwd),
 		gormcli.WithDataBase(cf.MySQL.Dbname),
-		gormcli.WithMaxIdleConn(2000),
-		gormcli.WithMaxOpenConn(20000),
+		gormcli.WithMaxIdleConn(10),
+		gormcli.WithMaxOpenConn(50),
 		gormcli.WithMaxIdleTime(30),
-		gormcli.WithSlowThresholdMillisecond(10),
+		gormcli.WithSlowThresholdMillisecond(0),
 	)
 	cache.Init(
 		cache.WithAddr(cf.Redis.Url),
 		cache.WithPassWord(cf.Redis.Pwd),
 		cache.WithDB(0),
 	)
-	producers := generateProducer(cf)
-	consumers := generateConsumer(cf)
+	var producers map[PriorityEnum]mq.Producer
+	var consumers map[PriorityEnum]mq.Consumer
+	if !cf.Common.MySQLAsMq {
+		if err := validateKafka(cf); err != nil {
+			return nil, err
+		}
+		producers = generateProducer(cf)
+		consumers = generateConsumer(cf)
+	}
 
 	dta := &Data{
 		db:        gormcli.GetDB(),
@@ -151,24 +165,20 @@ func NewData(cf *conf.TomlConfig) (*Data, error) {
 		consumers: consumers,
 	}
 	data = dta
-	fmt.Println("producer 2", data.GetLowMQProducer())
-	fmt.Printf("data is %+v\n", data)
-	fmt.Printf("data db is %+v\n", data.GetDB())
+
 	return dta, nil
 }
 
 func generateProducer(cf *conf.TomlConfig) map[PriorityEnum]mq.Producer {
-	log.Infof("生成生产者 %+v", cf.Kafka)
 	producers := make(map[PriorityEnum]mq.Producer)
 
 	for _, topicConfig := range cf.Kafka.Topics {
 		producer := mq.NewKafkaProducer(
 			mq.WithBrokers(cf.Kafka.Brokers),
 			mq.WithTopic(topicConfig.Name),
-			mq.WithAck(int8(topicConfig.Ack)),
+			mq.WithAck(-1),
 			mq.WithGroupID(topicConfig.GroupID),
-			mq.WithPartition(topicConfig.Partition),
-			mq.WithAsync())
+			mq.WithPartition(topicConfig.Partition))
 
 		if producer == nil {
 			panic(fmt.Sprintf("nil producer for %s", topicConfig.Name))
@@ -180,23 +190,10 @@ func generateProducer(cf *conf.TomlConfig) map[PriorityEnum]mq.Producer {
 }
 
 func generateConsumer(cf *conf.TomlConfig) map[PriorityEnum]mq.Consumer {
-	log.Infof("生成消费者 %+v", cf.Kafka)
 	consumers := make(map[PriorityEnum]mq.Consumer)
 
 	for _, topicConfig := range cf.Kafka.Topics {
-		consumerOpts := []mq.Option{
-			mq.WithBrokers(cf.Kafka.Brokers),
-			mq.WithTopic(topicConfig.Name),
-			mq.WithGroupID(topicConfig.GroupID),
-			mq.WithPartition(topicConfig.Partition),
-		}
-
-		// 如果配置了消费者组ID，则添加
-		if topicConfig.GroupID != "" {
-			consumerOpts = append(consumerOpts, mq.WithGroupID(topicConfig.GroupID))
-		}
-
-		consumer := mq.NewKafkaConsumer(consumerOpts...)
+		consumer := newKafkaConsumer(cf.Kafka.Brokers, topicConfig.Name, topicConfig.GroupID)
 		if consumer == nil {
 			panic(fmt.Sprintf("nil consumer for %s", topicConfig.Name))
 		}
@@ -204,4 +201,18 @@ func generateConsumer(cf *conf.TomlConfig) map[PriorityEnum]mq.Consumer {
 	}
 
 	return consumers
+}
+
+func (p *Data) Close() {
+	for _, producer := range p.producers {
+		producer.Close()
+	}
+	if p.db != nil {
+		if db, err := p.db.DB(); err == nil {
+			_ = db.Close()
+		}
+	}
+	if p.rdb != nil {
+		p.rdb.Close()
+	}
 }

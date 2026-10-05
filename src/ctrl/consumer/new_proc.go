@@ -3,15 +3,17 @@ package consumer
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/BitofferHub/msgcenter/src/ctrl/msgpush"
-	"github.com/BitofferHub/msgcenter/src/data"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/msgpush"
+	"github.com/WoAiXueXiHa/MsgMate/src/data"
 )
 
+// MsgIntf 将队列处理与具体渠道解耦：消费者填充公共字段，适配器负责发送。
 type MsgIntf interface {
 	SendMsg() error
 	Base() *MsgBase
 }
 
+// MsgHandler 保存处理器工厂，每次消费创建新实例，避免共享单条消息的状态。
 type MsgHandler struct {
 	Channel int
 	NewProc func() MsgIntf
@@ -27,11 +29,12 @@ type MsgBase struct {
 	NotifyURL    string            `json:"notifyUrl" form:"notifyUrl"`
 }
 
-// Base func get base struct
+// Base 暴露嵌入的公共字段，供消费者统一填充。
 func (p *MsgBase) Base() *MsgBase {
 	return p
 }
 
+// InitMsgProc 必须在启动消费者前完成；注册表在消费期间只读。
 func InitMsgProc() {
 	emailMsgProc := MsgHandler{
 		Channel: int(data.Channel_EMAIL),
@@ -52,7 +55,7 @@ func InitMsgProc() {
 
 var msgProcMap = make(map[int]*MsgHandler, 0)
 
-// RegisterHandler func RegisterHandler
+// RegisterHandler 在初始化阶段注册渠道工厂。
 func RegisterHandler(handler *MsgHandler) {
 	msgProcMap[handler.Channel] = handler
 }

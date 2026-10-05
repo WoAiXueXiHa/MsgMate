@@ -1,11 +1,11 @@
 package msg
 
 import (
-	"github.com/BitofferHub/msgcenter/src/constant"
-	"github.com/BitofferHub/msgcenter/src/ctrl/ctrlmodel"
-	"github.com/BitofferHub/msgcenter/src/ctrl/handler"
-	"github.com/BitofferHub/msgcenter/src/data"
 	"github.com/BitofferHub/pkg/middlewares/log"
+	"github.com/WoAiXueXiHa/MsgMate/src/constant"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/ctrlmodel"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/handler"
+	"github.com/WoAiXueXiHa/MsgMate/src/data"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -33,14 +33,16 @@ func DelTemplate(c *gin.Context) {
 		return
 	}
 	// 执行处理函数, 这里会调用对应的HandleInput和HandleProcess，往下看
-	handler.Run(&hd)
+	if err := handler.Run(&hd); err != nil && hd.Resp.Code == 0 {
+		hd.Resp.Code = constant.ERR_INTERNAL
+	}
 }
 
 // HandleInput 参数检查
 func (p *DelTemplateHandler) HandleInput() error {
 	if p.Req.TemplateID == "" {
 		p.Resp.Code = constant.ERR_INPUT_INVALID
-		return nil
+		return constant.ERR_HANDLE_INPUT
 	}
 	return nil
 }
@@ -53,5 +55,6 @@ func (p *DelTemplateHandler) HandleProcess() error {
 	if err != nil {
 		return err
 	}
+	dt.InvalidateTemplate(p.Req.TemplateID)
 	return nil
 }

@@ -3,269 +3,145 @@ package consumer
 import (
 	"context"
 	"encoding/json"
-	"github.com/BitofferHub/pkg/middlewares/lock"
+	"errors"
 	"strconv"
+	"sync"
 	"time"
 
-	"github.com/BitofferHub/msgcenter/src/config"
-	"github.com/BitofferHub/msgcenter/src/constant"
-	"github.com/BitofferHub/msgcenter/src/ctrl/ctrlmodel"
-	"github.com/BitofferHub/msgcenter/src/ctrl/tools"
-	"github.com/BitofferHub/msgcenter/src/data"
+	"github.com/BitofferHub/pkg/middlewares/lock"
 	"github.com/BitofferHub/pkg/middlewares/log"
+	"github.com/WoAiXueXiHa/MsgMate/src/config"
+	"github.com/WoAiXueXiHa/MsgMate/src/constant"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/ctrlmodel"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/tools"
+	"github.com/WoAiXueXiHa/MsgMate/src/data"
+	"gorm.io/gorm"
 )
 
+// TimerMsgConsume 将到期任务转交给普通队列，本身不调用发送渠道。
+// MySQL 保存任务本体，Redis 只提供时间索引，避免索引丢失导致任务永久遗漏。
 type TimerMsgConsume struct {
-	// 分布式锁映射，每个优先级一个锁
-	lock *lock.RedisLock
-	// 是否是主节点的标志，每个优先级一个标志
-	isLeader bool
+	ctx      context.Context
+	cancel   context.CancelFunc
+	wg       sync.WaitGroup
+	lastScan time.Time
 }
 
-const (
-	// 锁的前缀
-	LOCK_TIMER_KEY = "TIMER_MSG_LEADER_CONSUMER"
-
-	// 锁的过期时间（秒）
-	LOCK_TIMER_EXPIRE_SECONDS = 5
-
-	// 非主节点尝试获取锁的间隔（秒）
-	LOCK_TIMER_RETRY_INTERVAL_SECONDS = 5
-)
-
-// Consume 方法用于启动消息消费
 func (s *TimerMsgConsume) Consume() {
-	// 初始化锁和领导状态
-	s.lock = lock.NewRedisLock(LOCK_TIMER_KEY,
-		lock.WithExpireSeconds(LOCK_TIMER_EXPIRE_SECONDS),
-		lock.WithWatchDogMode()) // 使用看门狗模式自动续期
-	s.isLeader = false
-	ctx := context.Background()
-	// 启动处理定时消息
-	go s.consumeFromTimer(ctx)
+	s.ctx, s.cancel = context.WithCancel(context.Background())
+	s.wg.Add(1)
+	go func() { defer s.wg.Done(); s.consumeFromTimer(s.ctx) }()
+}
+
+// Unlock 先取消循环，再等待当前转交退出；锁由消费协程的 defer 释放。
+func (s *TimerMsgConsume) Unlock() {
+	if s.cancel != nil {
+		s.cancel()
+		s.wg.Wait()
+	}
 }
 
 func (s *TimerMsgConsume) consumeFromTimer(ctx context.Context) {
-	ticker := time.NewTicker(time.Duration(100) * time.Millisecond)
-	defer ticker.Stop()
-	for range ticker.C {
-		if s.isLeader {
-			s.consumeTimerMsg()
-		} else {
-			// 作为备用节点，定期尝试获取锁
-			log.Debugf("定时消费者作为备用节点，等待成为主节点")
-			time.Sleep(time.Second * LOCK_TIMER_RETRY_INTERVAL_SECONDS)
-			s.isLeader = s.tryBeLeader(ctx)
-			if s.isLeader {
-				log.Infof("%s定时消费者从备用节点升级为主节点")
-			}
+	l := lock.NewRedisLock("TIMER_MSG_LEADER_CONSUMER", lock.WithExpireSeconds(5), lock.WithWatchDogMode())
+	for l.Lock(ctx) != nil {
+		if !wait(ctx, time.Second) {
+			return
 		}
 	}
-}
-
-// tryBeLeader 尝试成为主节点
-func (s *TimerMsgConsume) tryBeLeader(ctx context.Context) bool {
-	redisLock := s.lock
-
-	// 尝试获取锁
-	err := redisLock.Lock(ctx)
-	if err != nil {
-		log.Infof("%s定时消费者未能获取到主节点锁: %v", err)
-		return false
+	defer l.Unlock(context.Background())
+	for ctx.Err() == nil {
+		s.consumeTimerMsg()
+		if !wait(ctx, 100*time.Millisecond) {
+			return
+		}
 	}
-
-	log.Infof("%s定时消费者成功获取主节点锁，成为主消费者")
-	return true
 }
 
 func (s *TimerMsgConsume) consumeTimerMsg() {
-	// 前后波动500ms
-	ctx := context.Background()
+	ctx := s.ctx
 	dt := data.GetData()
-	now := time.Now().Unix()
-	//msgList, err := dt.GetCache().ZRangeByScore(ctx, "Timer_Msgs", "0", strconv.FormatInt(time.Now().UnixMilli(), 10))
-	result, err := dt.GetCache().EvalResults(ctx, constant.LUA_ZRANGEBYSCORE_AND_REM,
-		[]string{"Timer_Msgs"}, []interface{}{"0", strconv.FormatInt(now, 10)})
+	now := time.Now()
+	result, err := dt.GetCache().EvalResults(ctx, constant.LUA_ZRANGEBYSCORE_AND_REM, []string{"Timer_Msgs"}, []interface{}{"0", strconv.FormatInt(now.Unix(), 10)})
+	times, _ := result.([]interface{})
+	// Redis 索引用于触发扫描；即使没有索引或 Redis 出错，也定期查询 MySQL。
+	// 索引先被移除后若数据库转交失败，pending 任务仍能被下一次补扫发现。
+	if err == nil && len(times) == 0 && now.Sub(s.lastScan) < time.Second {
+		return
+	}
+	s.lastScan = now
+	rows, err := data.MsgTmpQueueTimerNsp.GetOnTimeMsgList(dt.GetDB(), int(data.TIMER_MSG_STATUS_PENDING), now.Unix())
 	if err != nil {
+		log.Errorf("timer database scan failed: %v", err)
 		return
 	}
-	timeList, ok := result.([]interface{})
-	if !ok || len(timeList) == 0 {
-		return
-	}
-
-	tmpMsgList, err := data.MsgTmpQueueTimerNsp.GetOnTimeMsgList(dt.GetDB(),
-		int(data.TIMER_MSG_STATUS_PENDING), now)
-
-	if err != nil {
-		log.ErrorContextf(ctx, "MsgTmpQueueTimerNsp.GetOnTimeMsgList err %s", err.Error())
-		return
-	}
-	// 遍历消息列表，将每个消息的ID添加到msgIdList中
-	msgIdList := make([]string, 0)
-	for _, dbMsg := range tmpMsgList {
-		msgIdList = append(msgIdList, dbMsg.MsgId)
-	}
-
-	// 如果msgIdList不为空，则批量设置消息状态为处理中
-	if len(msgIdList) != 0 {
-		err = data.MsgTmpQueueTimerNsp.BatchSetStatus(dt.GetDB(), msgIdList,
-			int(data.TIMER_MSG_STATUS_PROCESSING))
-		// 如果批量设置消息状态时发生错误，则返回
-		if err != nil {
+	for _, row := range rows {
+		if ctx.Err() != nil {
 			return
 		}
-	}
-
-	// 遍历消息列表，处理每个消息
-	for _, dbMsg := range tmpMsgList {
-		var req = new(ctrlmodel.SendMsgReq)
-		// 反序列化消息
-		err = json.Unmarshal([]byte(dbMsg.Req), &req)
-		if err != nil {
-			log.ErrorContextf(ctx, "unmarshal message err %s", err.Error())
-			return
+		var req ctrlmodel.SendMsgReq
+		if err := json.Unmarshal([]byte(row.Req), &req); err != nil {
+			_ = finishTimer(dt.GetDB(), row.MsgId, int(data.TIMER_MSG_STATUS_FAILED))
+			continue
 		}
-		// 处理消息
-		req.MsgID = dbMsg.MsgId
-		go func() {
-			status := int(data.TIMER_MSG_STATUS_SUCC)
-			err = reSendOneMsg(ctx, req)
-			if err != nil {
-				// 重试一次消息
-				err = reSendOneMsg(ctx, req)
-				if err != nil {
-					log.ErrorContextf(ctx, "reSendOneMsg err %s", err.Error())
-					status = int(data.TIMER_MSG_STATUS_FAILED)
+		req.MsgID = row.MsgId
+		tp, err := dt.GetMsgTemplate(ctx, req.TemplateID)
+		if errors.Is(err, gorm.ErrRecordNotFound) || err == nil && (tp.Status != int(data.TEMPLATE_STATUS_NORMAL) || req.Priority < 1 || req.Priority > 3) {
+			_ = finishTimer(dt.GetDB(), row.MsgId, int(data.TIMER_MSG_STATUS_FAILED))
+			continue
+		}
+		if err != nil {
+			continue
+		}
+		req.Subject = tp.Subject
+		// MySQL 模式将补建记录、入队、完成定时任务放在同一事务中。
+		// 定时状态成功仅表示转交完成，实际发送结果由普通消费者写入。
+		if config.Conf.Common.MySQLAsMq {
+			err = dt.GetDB().Transaction(func(tx *gorm.DB) error {
+				if err := ensureTimerRecord(tx, &req, tp); err != nil {
+					return err
+				}
+				if err := data.Enqueue(tx, &req); err != nil {
+					return err
+				}
+				return data.MsgTmpQueueTimerNsp.SetStatus(tx, req.MsgID, int(data.TIMER_MSG_STATUS_SUCC))
+			})
+		} else {
+			if err := ensureTimerRecord(dt.GetDB(), &req, tp); err != nil {
+				continue
+			}
+			if err = dt.Publish(ctx, &req); err == nil {
+				// Broker 确认后只重试数据库状态，避免本进程重复发布。
+				// 两个存储无法原子提交，进程在此崩溃仍可能导致再次发布。
+				for {
+					err = data.MsgTmpQueueTimerNsp.SetStatus(dt.GetDB(), req.MsgID, int(data.TIMER_MSG_STATUS_SUCC))
+					if err == nil || !wait(ctx, time.Second) {
+						break
+					}
 				}
 			}
-			err = data.MsgTmpQueueTimerNsp.SetStatus(dt.GetDB(), req.MsgID, status)
-			if err != nil {
-				log.ErrorContextf(ctx, "更新定时消息状态失败 err %s", err.Error())
-				return
-			}
-		}()
-	}
-}
-
-// dealOneMsg 处理一条消息
-func reSendOneMsg(ctx context.Context, req *ctrlmodel.SendMsgReq) error {
-	dt := data.GetData()
-
-	// 获取消息模板
-	tp, err := dt.GetMsgTemplate(ctx, req.TemplateID)
-	if err != nil {
-		log.ErrorContextf(ctx, "获取消息模板失败: %s", err.Error())
-	}
-
-	var sendErr error
-	if config.Conf.Common.MySQLAsMq {
-		sendErr = sendToMySQL(ctx, req)
-		if sendErr != nil {
-			log.Errorf(" timer sendToMySQL err %s", sendErr.Error())
 		}
-	} else {
-		sendErr = sendToMQ(ctx, req)
-		if sendErr != nil {
-			log.Errorf(" timer sendToMQ err %s", sendErr.Error())
+		if err != nil {
+			log.Errorf("timer %s forwarding failed; remains pending", row.MsgId)
 		}
 	}
-
-	// 不管发送是否成功，都更新消息记录状态
-	// 如果发送成功，标记为"待处理"；如果发送失败，标记为失败或错误状态
-	var status int
-	if sendErr != nil {
-		status = int(data.MSG_STATUS_FAILED) // 使用负数表示错误状态
-	} else {
-		status = int(data.MSG_STATUS_PENDING) // 发送成功，标记为待处理
-	}
-
-	// 使用通用函数更新消息记录状态
-	updateErr := tools.CreateOrUpdateMsgRecord(dt.GetDB(), req.MsgID, req, tp, status)
-	if updateErr != nil {
-		log.ErrorContextf(ctx, "更新定时消息记录状态失败: %s", updateErr.Error())
-		// 更新状态失败不影响主流程
-	}
-
-	// 如果发送失败，返回错误
-	if sendErr != nil {
-		return sendErr
-	}
-
-	return nil
 }
 
-func sendToMySQL(ctx context.Context, req *ctrlmodel.SendMsgReq) error {
-	// 获取数据实例
-	dt := data.GetData()
-
-	// 创建一个新的消息队列实例
-	var md = new(data.MsgQueue)
-
-	// 设置消息的主题
-	md.Subject = req.Subject
-
-	// 设置消息的模板ID
-	md.TemplateID = req.TemplateID
-
-	// 将模板数据转换为JSON格式
-	td, err := json.Marshal(req.TemplateData)
-	if err != nil {
-		return err
-	}
-
-	// 设置消息的模板数据
-	md.TemplateData = string(td)
-
-	// 设置消息的接收者
-	md.To = req.To
-
-	// 设置消息的ID
-	md.MsgId = req.MsgID
-
-	// 设置消息的初始状态
-	md.Status = int(data.TASK_STATUS_PENDING)
-	md.Priority = req.Priority
-
-	// 将消息插入到MySQL数据库中
-	err = data.MsgQueueNsp.Create(dt.GetDB(),
-		data.GetPriorityStr(data.PriorityEnum(req.Priority)), md)
-	if err != nil {
-		return err
-	}
-	// 返回nil，表示发送成功
-	return nil
+// finishTimer 将无效定时任务及其已有消息记录一起标记失败。
+func finishTimer(db *gorm.DB, id string, status int) error {
+	return db.Transaction(func(tx *gorm.DB) error {
+		if err := data.MsgRecordNsp.UpdateStatus(tx, id, int(data.MSG_STATUS_FAILED)); err != nil {
+			return err
+		}
+		return data.MsgTmpQueueTimerNsp.SetStatus(tx, id, status)
+	})
 }
 
-func sendToMQ(ctx context.Context, req *ctrlmodel.SendMsgReq) error {
-	// 获取数据实例
-	log.Infof("into sendToMQ")
-	dt := data.GetData()
-
-	// 将请求结构体转换为JSON格式
-	msgJson, err := json.Marshal(req)
-	if err != nil {
-		log.ErrorContextf(context.Background(), "json marshal err %s", err.Error())
-		return err
+// ensureTimerRecord 为缺少普通记录的历史定时任务补建记录。
+// 已存在的记录保持原状态，不能在转交时覆盖为 pending。
+func ensureTimerRecord(db *gorm.DB, req *ctrlmodel.SendMsgReq, tp *data.MsgTemplate) error {
+	_, err := data.MsgRecordNsp.Find(db, req.MsgID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return tools.CreateMsgRecord(db, req.MsgID, req, tp, int(data.MSG_STATUS_PENDING))
 	}
-
-	// 根据消息优先级选择对应的消息队列生产者
-	if req.Priority == int(data.PRIORITY_LOW) {
-		// 获取低优先级消息队列生产者
-		producer := dt.GetLowMQProducer()
-		// 发送消息到低优先级消息队列
-		return producer.SendMessage(msgJson)
-	} else if req.Priority == int(data.PRIORITY_MIDDLE) {
-		// 获取中优先级消息队列生产者
-		producer := dt.GetMiddleMQProducer()
-		// 发送消息到中优先级消息队列
-		return producer.SendMessage(msgJson)
-	} else if req.Priority == int(data.PRIORITY_HIGH) {
-		// 获取高优先级消息队列生产者
-		producer := dt.GetHighMQProducer()
-		// 发送消息到高优先级消息队列
-		return producer.SendMessage(msgJson)
-	}
-	// 返回nil，表示发送成功
-	return nil
+	return err
 }

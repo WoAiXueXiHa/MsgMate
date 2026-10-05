@@ -1,12 +1,12 @@
 package msg
 
 import (
-	"github.com/BitofferHub/msgcenter/src/constant"
-	"github.com/BitofferHub/msgcenter/src/ctrl/ctrlmodel"
-	"github.com/BitofferHub/msgcenter/src/ctrl/handler"
-	"github.com/BitofferHub/msgcenter/src/data"
 	"github.com/BitofferHub/pkg/middlewares/log"
 	"github.com/BitofferHub/pkg/utils"
+	"github.com/WoAiXueXiHa/MsgMate/src/constant"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/ctrlmodel"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/handler"
+	"github.com/WoAiXueXiHa/MsgMate/src/data"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -41,7 +41,9 @@ func CreateTemplate(c *gin.Context) {
 		return
 	}
 	// 执行处理函数，这里会调用对应的 HandleInput 和 HandleProcess
-	handler.Run(&hd)
+	if err := handler.Run(&hd); err != nil && hd.Resp.Code == 0 {
+		hd.Resp.Code = constant.ERR_INTERNAL
+	}
 }
 
 // HandleInput 参数检查
@@ -49,27 +51,27 @@ func (p *CreateTemplateHandler) HandleInput() error {
 	// 检查模板名称是否为空
 	if p.Req.Name == "" {
 		p.Resp.Code = constant.ERR_INPUT_INVALID
-		return nil
+		return constant.ERR_HANDLE_INPUT
 	}
 	// 检查模板内容是否为空
 	if p.Req.Content == "" {
 		p.Resp.Code = constant.ERR_INPUT_INVALID
-		return nil
+		return constant.ERR_HANDLE_INPUT
 	}
 	// 检查模板主题是否为空
 	if p.Req.Subject == "" {
 		p.Resp.Code = constant.ERR_INPUT_INVALID
-		return nil
+		return constant.ERR_HANDLE_INPUT
 	}
 	// 检查模板渠道是否为0
-	if p.Req.Channel == 0 {
+	if p.Req.Channel < 1 || p.Req.Channel > 3 {
 		p.Resp.Code = constant.ERR_INPUT_INVALID
-		return nil
+		return constant.ERR_HANDLE_INPUT
 	}
 	// 检查模板来源ID是否为空
 	if p.Req.SourceID == "" {
 		p.Resp.Code = constant.ERR_INPUT_INVALID
-		return nil
+		return constant.ERR_HANDLE_INPUT
 	}
 	return nil
 }

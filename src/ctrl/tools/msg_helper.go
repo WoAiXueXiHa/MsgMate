@@ -4,17 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"time"
 
-	"github.com/BitofferHub/msgcenter/src/config"
-	"github.com/BitofferHub/msgcenter/src/ctrl/ctrlmodel"
-	"github.com/BitofferHub/msgcenter/src/data"
 	"github.com/BitofferHub/pkg/middlewares/log"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/ctrlmodel"
+	"github.com/WoAiXueXiHa/MsgMate/src/data"
 	"gorm.io/gorm"
 )
 
-// CreateMsgRecord 创建消息记录的通用函数
+// CreateMsgRecord 创建可供接口立即查询的消息记录。
+// db 可以是事务句柄，记录与队列的原子提交由调用方组织。
 // 参数:
 //   - db: 数据库连接
 //   - msgID: 消息ID
@@ -56,13 +54,6 @@ func CreateMsgRecord(db *gorm.DB, msgID string, req *ctrlmodel.SendMsgReq, mt *d
 	if err != nil {
 		log.ErrorContextf(ctx, "创建消息记录失败：%s", err.Error())
 		return err
-	}
-
-	// 保存到缓存
-	if config.Conf.Common.OpenCache {
-		jsonData, _ := json.Marshal(msgRecord)
-		cacheKey := fmt.Sprintf("%s%s", data.REDIS_KEY_MES_RECORD, msgID)
-		data.GetData().GetCache().Set(ctx, cacheKey, string(jsonData), 10000*time.Second)
 	}
 
 	log.InfoContextf(ctx, "消息记录 %s 已创建，状态为：%d", msgID, status)

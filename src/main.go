@@ -6,11 +6,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/BitofferHub/msgcenter/src/config"
-	"github.com/BitofferHub/msgcenter/src/ctrl/consumer"
-	"github.com/BitofferHub/msgcenter/src/data"
-	"github.com/BitofferHub/msgcenter/src/initialize"
 	"github.com/BitofferHub/pkg/middlewares/log"
+	"github.com/WoAiXueXiHa/MsgMate/src/config"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/consumer"
+	"github.com/WoAiXueXiHa/MsgMate/src/data"
+	"github.com/WoAiXueXiHa/MsgMate/src/initialize"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,23 +20,29 @@ func main() {
 	_, err := data.NewData(config.Conf)
 	if err != nil {
 		log.Errorf("initialize NewData err %s", err.Error())
-		return
+		os.Exit(1)
+	}
+	// 先注册渠道工厂，再恢复遗留任务、启动消费者，避免消费时找不到处理器。
+	consumer.InitMsgProc()
+	if err := data.RecoverPending(data.GetData().GetDB(), config.Conf.Common.MySQLAsMq); err != nil {
+		log.Errorf("recover pending: %v", err)
+		os.Exit(1)
 	}
 	cs := consumer.NewMsgConsume()
 	cs.Consume()
 	var tmc consumer.TimerMsgConsume
 	tmc.Consume()
-	consumer.InitMsgProc()
 
 	// 设置信号处理，确保在程序退出前释放分布式锁
 	setupSignalHandler(cs, &tmc)
 
 	// 创建一个web服务
 	router := gin.Default()
-	// 这里跳进去就能看到有哪些接口
+	_ = router.SetTrustedProxies(nil)
+	// 路由层只接收请求；实际发送由后台消费者完成。
 	initialize.RegisterRouter(router)
 	fmt.Println("before router run")
-	// 启动web server，这一步之后这个主协程启动会阻塞在这里，请求可以通过gin的子协程进来
+	// HTTP 服务阻塞主协程，后台队列和定时任务在独立协程中推进。
 	err = router.Run(fmt.Sprintf(":%d", config.Conf.Common.Port))
 	fmt.Println(err)
 }
@@ -53,7 +59,9 @@ func setupSignalHandler(cs *consumer.MsgConsume, tmc *consumer.TimerMsgConsume) 
 
 		// 释放所有分布式锁
 		log.Info("释放所有分布式锁...")
+		tmc.Unlock()
 		cs.UnlockAll()
+		data.GetData().Close()
 
 		log.Info("锁释放完成，程序退出")
 		os.Exit(0)

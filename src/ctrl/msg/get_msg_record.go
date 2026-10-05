@@ -1,18 +1,14 @@
 package msg
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"time"
 
-	"github.com/BitofferHub/msgcenter/src/config"
-	"github.com/BitofferHub/msgcenter/src/constant"
-	"github.com/BitofferHub/msgcenter/src/ctrl/ctrlmodel"
-	"github.com/BitofferHub/msgcenter/src/ctrl/handler"
-	"github.com/BitofferHub/msgcenter/src/data"
 	"github.com/BitofferHub/pkg/middlewares/log"
+	"github.com/WoAiXueXiHa/MsgMate/src/constant"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/ctrlmodel"
+	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/handler"
+	"github.com/WoAiXueXiHa/MsgMate/src/data"
 	"github.com/gin-gonic/gin"
 )
 
@@ -39,14 +35,16 @@ func GetMsgRecord(c *gin.Context) {
 		return
 	}
 	// 执行处理函数, 这里会调用对应的HandleInput和HandleProcess，往下看
-	handler.Run(&hd)
+	if err := handler.Run(&hd); err != nil && hd.Resp.Code == 0 {
+		hd.Resp.Code = constant.ERR_INTERNAL
+	}
 }
 
 // HandleInput 参数检查
 func (p *GetMsgRecordHandler) HandleInput() error {
 	if p.Req.MsgID == "" {
 		p.Resp.Code = constant.ERR_INPUT_INVALID
-		return nil
+		return constant.ERR_HANDLE_INPUT
 	}
 	return nil
 }
@@ -55,33 +53,24 @@ func (p *GetMsgRecordHandler) HandleInput() error {
 func (p *GetMsgRecordHandler) HandleProcess() error {
 	log.Infof("into HandleProcess")
 	dt := data.GetData()
-	ctx := context.Background()
 	var record = new(data.MsgRecord)
-	cacheKey := fmt.Sprintf("%s%s", data.REDIS_KEY_MES_RECORD, p.Req.MsgID)
-	cacheRecord, _, _ := dt.GetCache().Get(ctx, cacheKey)
-	log.Infof("cacheRecord: %s, req %+v", cacheRecord, p.Req)
-	if len(cacheRecord) > 0 && config.Conf.Common.OpenCache {
-		// 从缓存中获取模板数据
-		json.Unmarshal([]byte(cacheRecord), record)
-		log.Infof("record cache hit %+v", record)
-	} else {
-		log.Infof("record cache miss")
-		var err error
-		record, err = data.MsgRecordNsp.Find(dt.GetDB(), p.Req.MsgID)
-		if err != nil {
-			log.ErrorContextf(ctx, "MsgRecordNsp.Find err %s", err.Error())
-			return err
-		}
-		if config.Conf.Common.OpenCache {
-			value, _ := json.Marshal(record)
-			dt.GetCache().Set(ctx, cacheKey, string(value), 30*time.Second)
-		}
+	var err error
+	record, err = data.MsgRecordNsp.Find(dt.GetDB(), p.Req.MsgID)
+	if err != nil {
+		return err
+	}
+	if record.SourceID != p.UserId {
+		p.Resp.Code = constant.ERR_INPUT_INVALID
+		return constant.ERR_HANDLE_INPUT
 	}
 
+	p.Resp.To = record.To
+	p.Resp.Status = record.Status
+	p.Resp.RetryCount = record.RetryCount
 	p.Resp.Subject = record.Subject
 	p.Resp.TemplateID = record.TemplateID
 	p.Resp.TemplateData = make(map[string]string)
-	err := json.Unmarshal([]byte(record.TemplateData), &p.Resp.TemplateData)
+	err = json.Unmarshal([]byte(record.TemplateData), &p.Resp.TemplateData)
 	if err != nil {
 		log.Errorf("json.Unmarshal err %s", err.Error())
 		return err

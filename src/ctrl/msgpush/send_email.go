@@ -2,50 +2,63 @@ package msgpush
 
 import (
 	"crypto/tls"
-	"sync"
-
-	"github.com/BitofferHub/msgcenter/src/config"
-	"github.com/BitofferHub/pkg/middlewares/log"
+	"fmt"
+	"github.com/WoAiXueXiHa/MsgMate/src/config"
 	"gopkg.in/gomail.v2"
+	"net"
+	"net/smtp"
+	"time"
 )
 
-const (
-	// 端口
-	port = 465
-	// 邮箱服务器
-	emailHost = "smtp.qq.com"
-)
+const emailHost = "smtp.qq.com"
 
-var (
-	once = sync.Once{}
-	d    *gomail.Dialer
-)
+// SendEmail 分别限制连接与 SMTP 交互时间，并验证服务端 TLS 证书。
+func SendEmail(to, subject, text string) error {
+	account, code := config.Conf.Common.EmailAccount, config.Conf.Common.EmailAuthCode
+	if account == "" || code == "" {
+		return fmt.Errorf("email account and authorization code required")
+	}
+	conn, err := tls.DialWithDialer(&net.Dialer{Timeout: 10 * time.Second}, "tcp", net.JoinHostPort(emailHost, "465"), &tls.Config{ServerName: emailHost, MinVersion: tls.VersionTLS12})
+	if err != nil {
+		return fmt.Errorf("SMTP TLS: %w", err)
+	}
+	defer conn.Close()
+	_ = conn.SetDeadline(time.Now().Add(30 * time.Second))
+	client, err := smtp.NewClient(conn, emailHost)
+	if err != nil {
+		return fmt.Errorf("SMTP greeting: %w", err)
+	}
+	defer client.Close()
+	if err := client.Auth(smtp.PlainAuth("", account, code, emailHost)); err != nil {
+		return fmt.Errorf("SMTP authentication: %w", err)
+	}
+	return sendEmail(client, account, to, subject, text)
+}
 
-// 发送给谁
-func SendEmail(to string, subject string, text string) error {
-	once.Do(func() {
-		d = gomail.NewDialer(emailHost, port, config.Conf.Common.EmailAccount, config.Conf.Common.EmailAuthCode)
-		d.TLSConfig = &tls.Config{
-			InsecureSkipVerify: true,
-			ServerName:         emailHost,
-		}
-	})
-
-	m := gomail.NewMessage()
-	// 设置发送者
-	m.SetHeader("From", config.Conf.Common.EmailAccount)
-	// 设置接收者
-	m.SetHeader("To", to)
-	// 设置主题
-	m.SetHeader("Subject", subject)
-	// 设置邮件内容
-	m.SetBody("text/plain", text)
-
-	// Send the email to Bob, Cora and Dan.
-	if err := d.DialAndSend(m); err != nil {
-		log.Errorf("发送邮件失败: %s", err.Error())
+func sendEmail(client *smtp.Client, account, to, subject, text string) error {
+	if err := client.Mail(account); err != nil {
+		return fmt.Errorf("SMTP MAIL: %w", err)
+	}
+	if err := client.Rcpt(to); err != nil {
+		return fmt.Errorf("SMTP RCPT: %w", err)
+	}
+	writer, err := client.Data()
+	if err != nil {
+		return fmt.Errorf("SMTP DATA: %w", err)
+	}
+	message := gomail.NewMessage()
+	message.SetHeader("From", account)
+	message.SetHeader("To", to)
+	message.SetHeader("Subject", subject)
+	message.SetBody("text/plain", text)
+	if _, err := message.WriteTo(writer); err != nil {
+		_ = writer.Close()
 		return err
 	}
-	log.Infof("发送邮件成功: %s", to)
+	if err := writer.Close(); err != nil {
+		return fmt.Errorf("SMTP DATA acceptance: %w", err)
+	}
+	// DATA 获得肯定应答表示 SMTP 已接受邮件；之后 QUIT 失败不能触发重复发送。
+	_ = client.Quit()
 	return nil
 }

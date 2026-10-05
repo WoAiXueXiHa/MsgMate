@@ -1,4 +1,4 @@
-module github.com/BitofferHub/msgcenter
+module github.com/WoAiXueXiHa/MsgMate
 
 go 1.16
 
@@ -13,6 +13,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/redis/go-redis/v9 v9.7.0
+ github.com/segmentio/kafka-go v0.4.47
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gorm.io/gorm v1.25.5

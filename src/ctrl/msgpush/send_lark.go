@@ -4,103 +4,77 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
+	"time"
 )
 
-func GetAccessToken() (string, error) {
-	appID := os.Getenv("FEISHU_APP_ID")
-	appSecret := os.Getenv("FEISHU_APP_SECRET")
-	if appID == "" || appSecret == "" {
-		return "", fmt.Errorf("FEISHU_APP_ID and FEISHU_APP_SECRET must be set")
-	}
-	url := "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/"
+var feishuBaseURL = "https://open.feishu.cn"
+var feishuClient = &http.Client{Timeout: 15 * time.Second}
 
-	body := map[string]string{
-		"app_id":     appID,
-		"app_secret": appSecret,
-	}
-	bodyJSON, _ := json.Marshal(body)
-
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(bodyJSON))
+func feishuRequest(path, token string, body interface{}, result interface{}) error {
+	payload, err := json.Marshal(body)
 	if err != nil {
-		return "", err
+		return err
 	}
-	defer resp.Body.Close()
-
-	respBody, _ := ioutil.ReadAll(resp.Body)
-	var result map[string]interface{}
-	json.Unmarshal(respBody, &result)
-
-	if result["code"].(float64) != 0 {
-		return "", fmt.Errorf("failed to get access token: %v", result["msg"])
+	req, err := http.NewRequest(http.MethodPost, feishuBaseURL+path, bytes.NewReader(payload))
+	if err != nil {
+		return err
 	}
-
-	return result["tenant_access_token"].(string), nil
-}
-
-func SendMessage(accessToken, to, content string) error {
-	url := "https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id"
-
-	body := map[string]interface{}{
-		"receive_id": to,
-		"content":    fmt.Sprintf("{\"text\":\"%s\"}", content),
-		"msg_type":   "text",
-	}
-	bodyJSON, _ := json.Marshal(body)
-
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(bodyJSON))
-	req.Header.Set("Authorization", "Bearer "+accessToken)
 	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	if token != "" {
+		req.Header.Set("Authorization", "Bearer "+token)
+	}
+	resp, err := feishuClient.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
-
-	respBody, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("Response:", string(respBody))
-	return nil
-}
-
-// 根据手机号获取用户 OpenID
-func getUserOpenID(accessToken, phone string) (string, error) {
-	url := "https://open.feishu.cn/open-apis/contact/v3/users/batch_get_id"
-
-	body := map[string]interface{}{
-		"mobiles": []string{phone},
+	raw, err := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
+	if err != nil {
+		return err
 	}
-	bodyJSON, _ := json.Marshal(body)
-
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(bodyJSON))
-	req.Header.Set("Authorization", "Bearer "+accessToken)
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("feishu HTTP status %d", resp.StatusCode)
+	}
+	var status struct {
+		Code *int   `json:"code"`
+		Msg  string `json:"msg"`
+	}
+	if err := json.Unmarshal(raw, &status); err != nil {
+		return err
+	}
+	if status.Code == nil {
+		return fmt.Errorf("feishu response missing code")
+	}
+	if *status.Code != 0 {
+		return fmt.Errorf("feishu business error %d", *status.Code)
+	}
+	return json.Unmarshal(raw, result)
+}
+func GetAccessToken() (string, error) {
+	id, secret := os.Getenv("FEISHU_APP_ID"), os.Getenv("FEISHU_APP_SECRET")
+	if id == "" || secret == "" {
+		return "", fmt.Errorf("FEISHU_APP_ID and FEISHU_APP_SECRET must be set")
+	}
+	var result struct {
+		Token string `json:"tenant_access_token"`
+	}
+	err := feishuRequest("/open-apis/auth/v3/tenant_access_token/internal/", "", map[string]string{"app_id": id, "app_secret": secret}, &result)
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
-
-	respBody, _ := ioutil.ReadAll(resp.Body)
-	var result map[string]interface{}
-	json.Unmarshal(respBody, &result)
-	fmt.Println("result ", result)
-
-	if result["code"].(float64) != 0 {
-		return "", fmt.Errorf("failed to get user info: %v", result["msg"])
+	if result.Token == "" {
+		return "", fmt.Errorf("feishu token missing")
 	}
-
-	// 获取用户 OpenID
-	data := result["data"].(map[string]interface{})
-	userList := data["user_list"].([]interface{})
-	if len(userList) == 0 {
-		return "", fmt.Errorf("user not found")
+	return result.Token, nil
+}
+func SendMessage(token, to, content string) error {
+	text, err := json.Marshal(map[string]string{"text": content})
+	if err != nil {
+		return err
 	}
-	user := userList[0].(map[string]interface{})
-	return user["user_id"].(string), nil
+	var result json.RawMessage
+	return feishuRequest("/open-apis/im/v1/messages?receive_id_type=open_id", token, map[string]string{"receive_id": to, "content": string(text), "msg_type": "text"}, &result)
 }

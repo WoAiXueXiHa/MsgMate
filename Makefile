@@ -1,21 +1,19 @@
-PLATFORM=$(shell uname -m)
-DATETIME=$(shell date "+%Y%m%d%H%M%S")
+CONFIG ?= config/config-local.toml
 
+.PHONY: msgsvr run clean docker-run docker-stop test integration
 msgsvr:
-	go build -o bin/main src/main.go
-	chmod +x bin/main
-clean:
-	$(RM) tmp/* $(TARGET) 
-
-PHONY: run
+	go build -o bin/msgmate ./src
 run:
-	go run ./src/main.go --config=./config/config-test.toml
-
-
-PHONY: docker-run
+	go run ./src -config "$(CONFIG)"
+clean:
+	rm -f bin/msgmate
 docker-run:
-	docker compose up -d
-
-PHONY: docker-stop
-docker stop:
+	docker compose up -d mysql redis zookeeper kafka
+docker-stop:
 	docker compose down
+test:
+	go test ./...
+	go test -race ./...
+	go vet ./...
+integration:
+	MSGMATE_TEST_CONFIG="$(CONFIG)" go test -race -tags integration ./src/ctrl/consumer -v -count=1

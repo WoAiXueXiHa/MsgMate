@@ -30,6 +30,8 @@ type GetMsgRecordReq struct {
 
 // GetMsgResult 响应消息
 type GetMsgRecordResp struct {
+	Status     int `json:"status"`
+	RetryCount int `json:"retryCount"`
 	RespComm
 	To           string            `json:"to" form:"to"`
 	Subject      string            `json:"subject" form:"subject"`
