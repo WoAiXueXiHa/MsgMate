@@ -1,2 +1,16 @@
 config/config-niuge.toml
 config/config-niuge.toml
+
+config/config-local*.toml
+log/
+bin/
+docker-compose/*
+!docker-compose/go.mod
+*.test
+
+.env
+.runtime/
+
+# OS metadata
+*:Zone.Identifier
+.DS_Store
