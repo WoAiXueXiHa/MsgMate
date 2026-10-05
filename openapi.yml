@@ -2,8 +2,7 @@ openapi: 3.1.0
 info:
   title: MsgMate 通知服务 API
   version: 1.0.0
-  description: 现有 HTTP 接口的源码说明。Source-Id 仅标识业务来源，不提供认证。HTTP 200 仍需检查 code；部分 Handler
-    未完整映射内部错误，成功响应不保证投递成功。示例未经真实发送验证。
+  description: HTTP 接口与接入规则。Source-Id 仅标识业务来源，不提供认证。HTTP 200 仍需检查 code；成功提交不保证用户已收到。
 servers:
 - url: http://localhost:8081
   description: 本地开发服务器
@@ -11,8 +10,7 @@ paths:
   /msg/send_msg:
     post:
       summary: 发送消息
-      description: 提交即时或定时通知，模板必须启用；入口配额控制提交速率，未提供提交幂等。Kafka 生产者强制异步模式，不能将返回成功视为 broker
-        持久化确认。
+      description: 提交即时或定时通知，模板必须启用；入口配额控制提交速率，未提供提交幂等。Kafka 同步发布并等待 acks=-1 确认；MySQL 模式事务写入队列和记录。
       operationId: sendMsg
       requestBody:
         required: true
@@ -30,15 +28,15 @@ paths:
       parameters:
       - name: Source-Id
         in: header
-        required: false
-        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无认证或所有权校验。
+        required: true
+        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无身份认证；发送和记录查询检查来源一致性。
         schema:
           type: string
         example: learnq
   /msg/get_msg_record:
     get:
       summary: 获取消息记录
-      description: 查询记录内容，不能查询投递状态；查询错误可能未映射到业务错误码，不用于轮询送达结果。
+      description: 查询记录、投递状态和失败次数；渠道成功表示接受请求，不表示用户已收到。
       operationId: getMsgRecord
       parameters:
       - name: msgID
@@ -49,8 +47,8 @@ paths:
           type: string
       - name: Source-Id
         in: header
-        required: false
-        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无认证或所有权校验。
+        required: true
+        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无身份认证；发送和记录查询检查来源一致性。
         schema:
           type: string
         example: learnq
@@ -83,7 +81,7 @@ paths:
       - name: Source-Id
         in: header
         required: false
-        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无认证或所有权校验。
+        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无身份认证；发送和记录查询检查来源一致性。
         schema:
           type: string
         example: learnq
@@ -102,7 +100,7 @@ paths:
       - name: Source-Id
         in: header
         required: false
-        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无认证或所有权校验。
+        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无身份认证；发送和记录查询检查来源一致性。
         schema:
           type: string
         example: learnq
@@ -116,7 +114,7 @@ paths:
   /msg/update_template:
     post:
       summary: 更新模板
-      description: 更新完整模板字段，省略正文、主题或渠道可能清空对应值；不提供状态启用和版本隔离。
+      description: 仅更新非空字段，省略或为空的字段保留原值；不提供状态启用和版本隔离。
       operationId: updateTemplate
       requestBody:
         required: true
@@ -135,14 +133,14 @@ paths:
       - name: Source-Id
         in: header
         required: false
-        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无认证或所有权校验。
+        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无身份认证；发送和记录查询检查来源一致性。
         schema:
           type: string
         example: learnq
   /msg/del_template:
     post:
       summary: 删除模板
-      description: 删除模板，不检查在途消息依赖；不保证同步清除模板缓存。
+      description: 删除模板并清理模板缓存，不检查在途消息依赖。
       operationId: delTemplate
       requestBody:
         required: true
@@ -161,7 +159,7 @@ paths:
       - name: Source-Id
         in: header
         required: false
-        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无认证或所有权校验。
+        description: 业务来源标识，接入时应填写并与模板 sourceID 一致；当前无身份认证；发送和记录查询检查来源一致性。
         schema:
           type: string
         example: learnq
@@ -173,7 +171,7 @@ components:
       properties:
         code:
           type: integer
-          description: 业务错误码，0 为 Handler 成功；部分内部错误未正确映射，不构成投递保证。
+          description: 业务错误码，0 为接口操作成功，不构成用户收件保证。
         msg:
           type: string
           description: 响应消息
@@ -190,10 +188,10 @@ components:
           description: 邮件地址或飞书 open_id，由模板渠道决定。
         subject:
           type: string
-          description: 可选记录字段；实际发送主题取自模板，不覆盖模板主题。
+          description: 兼容可选字段；发送和记录主题均取自模板，该值不覆盖模板主题。
         priority:
           type: integer
-          description: 业务使用 0/1/2/3；省略或 0 默认低优先级 1，中 2，高 3。4 保留内部重试，不是业务提交选项；源码未完整验证枚举。
+          description: 业务使用 0/1/2/3；省略或 0 默认低优先级 1，中 2，高 3。4 保留内部重试，不是业务提交选项。
           enum:
           - 0
           - 1
@@ -211,7 +209,7 @@ components:
         sendTimestamp:
           type: integer
           format: int64
-          description: Unix 秒级时间戳；正数进入定时任务流程，即时发送省略或填 0。建议填写未来时间，源码未完整校验。
+          description: Unix 秒级时间戳；正数进入定时任务流程，即时发送省略或填 0。建议填写未来时间，负数拒绝。
           minimum: 0
       example:
         to: recipient@example.com
@@ -222,7 +220,7 @@ components:
           title: Go Channel
     SendMsgResp:
       type: object
-      description: 提交结果，msgID 为服务端生成的关联 ID，不是幂等键。成功不等于持久化确认、渠道接受或用户收到。
+      description: 提交结果，msgID 为服务端生成的关联 ID，不是幂等键。MySQL 队列事务提交或 Kafka Broker 确认成功；不等于渠道接受或用户收到。
       allOf:
       - $ref: '#/components/schemas/RespComm'
       - type: object
@@ -241,14 +239,22 @@ components:
           description: 消息ID
     GetMsgRecordResp:
       type: object
-      description: 记录内容，没有 status 或 retry_count。当前 Handler 未填充 to，其值为空。定时任务进入普通队列前可能无记录。
+      description: 记录内容与状态。即时和定时任务均在提交时创建记录，status=2 表示渠道接受请求。
       allOf:
       - $ref: '#/components/schemas/RespComm'
       - type: object
         properties:
+          status:
+            type: integer
+            enum: [1, 2, 3]
+            description: 1 待处理，2 渠道接受，3 最终失败。
+          retryCount:
+            type: integer
+            minimum: 0
+            description: 失败次数。
           to:
             type: string
-            description: 当前 Handler 未赋值，响应为空字符串。
+            description: 渠道接收人。
           subject:
             type: string
             description: 消息主题
@@ -351,7 +357,7 @@ components:
             description: 模板内容
     UpdateTemplateReq:
       type: object
-      description: 更新模板。templateID 必填；当前实现会覆盖正文、主题、渠道，应提交完整字段，不按 PATCH 使用。
+      description: 更新模板。templateID 必填；非空字段更新，省略字段保留原值，不支持清空正文。
       required:
       - templateID
       properties:
@@ -369,8 +375,9 @@ components:
           description: 主题
         channel:
           type: integer
-          description: 渠道
+          description: 渠道，省略或 0 保留原值。
           enum:
+          - 0
           - 1
           - 2
           - 3
