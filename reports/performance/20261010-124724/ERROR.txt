@@ -1,3 +1,0 @@
-runtime not ready
-runtime-1  | dependency initialization failed: failed to connect database
-

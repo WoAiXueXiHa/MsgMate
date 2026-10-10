@@ -15,6 +15,6 @@ docker-compose/*
 *:Zone.Identifier
 .DS_Store
 
-# Local learning materials and resume; excluded from publication
+# Local learning materials; excluded from publication
 /docs/learning/
-/reports/performance/RESUME.md
+/docs/interview/
