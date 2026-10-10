@@ -14,3 +14,7 @@ docker-compose/*
 # OS metadata
 *:Zone.Identifier
 .DS_Store
+
+# Local learning materials and resume; excluded from publication
+/docs/learning/
+/reports/performance/RESUME.md

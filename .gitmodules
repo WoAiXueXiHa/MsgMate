@@ -1,0 +1,3 @@
+[submodule "wrk"]
+	path = wrk
+	url = https://github.com/wg/wrk.git
