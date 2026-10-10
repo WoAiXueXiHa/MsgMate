@@ -276,4 +276,4 @@ POST /msg/del_template
 
 客户端超时后不要盲目重复提交，服务没有提交幂等保证。已公开的 SMTP 授权码应在邮箱后台撤销并重新配置，文档不记录凭据。
 
-参数与业务边界参见 [API.md](API.md)，启动说明参见 [README.md](README.md)，配置说明参见 [config/README.md](config/README.md)。性能测试脚本见 [scripts/perf/README.md](scripts/perf/README.md)，实际数据、阈值与原始日志见 [reports/performance/RESULTS.md](reports/performance/RESULTS.md)；压测使用隔离依赖及零延迟模拟渠道，分别记录受理吞吐、消费完成速率和消息记录查询能力。
+参数与业务边界参见 [API.md](API.md)，启动说明参见 [README.md](README.md)，配置说明参见 [config/README.md](config/README.md)。直接 wrk 测试命令、完整输出与结论见 [reports/performance/RESULTS.md](reports/performance/RESULTS.md)；压测使用独立依赖、关闭消费者，比较缓存开关下的发送受理与消息记录查询。
