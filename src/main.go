@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -41,10 +43,25 @@ func main() {
 	_ = router.SetTrustedProxies(nil)
 	// 路由层只接收请求；实际发送由后台消费者完成。
 	initialize.RegisterRouter(router)
-	fmt.Println("before router run")
 	// HTTP 服务阻塞主协程，后台队列和定时任务在独立协程中推进。
-	err = router.Run(fmt.Sprintf(":%d", config.Conf.Common.Port))
-	fmt.Println(err)
+	// 明确使用 IPv4，避免通配地址的双栈行为受操作系统影响。
+	addr := fmt.Sprintf("0.0.0.0:%d", config.Conf.Common.Port)
+	listener, err := net.Listen("tcp4", addr)
+	if err != nil {
+		log.Errorf("HTTP listen %s: %v", addr, err)
+		tmc.Unlock()
+		cs.UnlockAll()
+		data.GetData().Close()
+		os.Exit(1)
+	}
+	log.Infof("HTTP listening on %s (IPv4)", addr)
+	if err := http.Serve(listener, router); err != nil {
+		log.Errorf("HTTP serve: %v", err)
+		tmc.Unlock()
+		cs.UnlockAll()
+		data.GetData().Close()
+		os.Exit(1)
+	}
 }
 
 // setupSignalHandler 设置信号处理，确保在程序退出前释放锁
