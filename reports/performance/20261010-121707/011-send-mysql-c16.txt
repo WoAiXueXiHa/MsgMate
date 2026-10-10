@@ -1,0 +1,14 @@
+Running 15s test @ http://runtime:18081
+  4 threads and 16 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    11.86ms    2.48ms  34.19ms   72.81%
+    Req/Sec   338.21     26.98   420.00     67.50%
+  Latency Distribution
+     50%   12.00ms
+     75%   13.23ms
+     90%   14.49ms
+     99%   18.62ms
+  20224 requests in 15.02s, 3.68MB read
+Requests/sec:   1346.76
+Transfer/sec:    251.20KB
+BENCH_JSON {"ok":20224,"bad":0,"requests":20224,"duration_us":15016784,"p50_ms":11.999,"p99_ms":18.622,"connect":0,"read":0,"write":0,"timeout":0,"http_errors":0}

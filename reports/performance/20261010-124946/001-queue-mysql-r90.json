@@ -1,0 +1,142 @@
+{
+  "scheduled": 2700,
+  "sent": 2700,
+  "accepted": 2700,
+  "business_errors": 0,
+  "transport_errors": 0,
+  "missed": 0,
+  "offered_rps": 90,
+  "duration_seconds": 30,
+  "elapsed_seconds": 29.995907332,
+  "p50_ms": 5.787,
+  "p99_ms": 9.376,
+  "codes": {
+    "0": 2700
+  },
+  "sample_ids": [
+    "05f338a9-3b5b-4e82-a141-744b8b7504ac",
+    "6581094c-e9be-4332-816b-649f7a564927",
+    "658d5347-7fd6-4e01-a3f6-b771eced0076",
+    "1430dc96-19af-400a-a97d-8c0537a25dcd",
+    "64957b46-1bf0-4e1f-a4a8-9af1bfa84bf5",
+    "18319319-3bde-4c9d-b7c5-737cfd520ca4",
+    "5c873a1c-a2bd-48be-a301-164e6c1efcaa",
+    "41761124-8219-4da8-946a-f27dd2663519",
+    "7874deb9-37ad-44ba-a4e5-ebe52bdfcd64",
+    "100d0eae-6f86-410c-b5bc-c6453345272a"
+  ],
+  "suite": "queue",
+  "mode": "mysql",
+  "duration": 30,
+  "verify": false,
+  "before": {
+    "consume": true,
+    "counts": {
+      "Total": 0,
+      "Pending": 0,
+      "Completed": 0,
+      "Failed": 0,
+      "Retries": 0
+    },
+    "db_pool": {
+      "MaxOpenConnections": 50,
+      "OpenConnections": 3,
+      "InUse": 0,
+      "Idle": 3,
+      "WaitCount": 0,
+      "WaitDuration": 0,
+      "MaxIdleClosed": 0,
+      "MaxIdleTimeClosed": 0,
+      "MaxLifetimeClosed": 0
+    },
+    "goroutines": 18,
+    "heap_bytes": 3474480,
+    "mode_mysql": true,
+    "mysql_time_wait": 0,
+    "sink_calls": 0,
+    "sink_delay_ms": 0,
+    "stats_error": "",
+    "time": "2026-10-10T04:50:09.621078066Z"
+  },
+  "at_stop": {
+    "consume": true,
+    "counts": {
+      "Total": 2700,
+      "Pending": 69,
+      "Completed": 2631,
+      "Failed": 0,
+      "Retries": 0
+    },
+    "db_pool": {
+      "MaxOpenConnections": 50,
+      "OpenConnections": 4,
+      "InUse": 1,
+      "Idle": 3,
+      "WaitCount": 0,
+      "WaitDuration": 0,
+      "MaxIdleClosed": 0,
+      "MaxIdleTimeClosed": 0,
+      "MaxLifetimeClosed": 3
+    },
+    "goroutines": 20,
+    "heap_bytes": 5077800,
+    "mode_mysql": true,
+    "mysql_time_wait": 3,
+    "sink_calls": 2632,
+    "sink_delay_ms": 0,
+    "stats_error": "",
+    "time": "2026-10-10T04:50:41.250178541Z"
+  },
+  "after": {
+    "consume": true,
+    "counts": {
+      "Total": 2700,
+      "Pending": 0,
+      "Completed": 2700,
+      "Failed": 0,
+      "Retries": 0
+    },
+    "db_pool": {
+      "MaxOpenConnections": 50,
+      "OpenConnections": 3,
+      "InUse": 0,
+      "Idle": 3,
+      "WaitCount": 0,
+      "WaitDuration": 0,
+      "MaxIdleClosed": 0,
+      "MaxIdleTimeClosed": 0,
+      "MaxLifetimeClosed": 4
+    },
+    "goroutines": 18,
+    "heap_bytes": 6034776,
+    "mode_mysql": true,
+    "mysql_time_wait": 4,
+    "sink_calls": 2700,
+    "sink_delay_ms": 0,
+    "stats_error": "",
+    "time": "2026-10-10T04:50:44.018822375Z"
+  },
+  "backlog_slope_rps": 4.447214564983478,
+  "tail_completion_rps": 85.53476013318222,
+  "drain_seconds": 2.769125023000015,
+  "completed": 2700,
+  "failed": 0,
+  "persisted": 2700,
+  "resources": "{\"BlockIO\":\"1.63MB / 0B\",\"CPUPerc\":\"0.00%\",\"Container\":\"5d4526ceb5d4fdbc09bd1c322f95302215c736adfd9a58f19e9d6b1eaa095803\",\"ID\":\"5d4526ceb5d4\",\"MemPerc\":\"0.06%\",\"MemUsage\":\"4.387MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-124946-load-1\",\"NetIO\":\"713kB / 976kB\",\"PIDs\":\"1\"}\n{\"BlockIO\":\"25.7MB / 431MB\",\"CPUPerc\":\"4.21%\",\"Container\":\"28e6e3992ef370a6f6d16ab40bd2d04047ccd6be045b6c387c328ded38a454fa\",\"ID\":\"28e6e3992ef3\",\"MemPerc\":\"5.75%\",\"MemUsage\":\"447.9MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-124946-mysql-1\",\"NetIO\":\"12.6MB / 19.4MB\",\"PIDs\":\"44\"}\n{\"BlockIO\":\"897kB / 0B\",\"CPUPerc\":\"0.17%\",\"Container\":\"c08f407edd311aff78efb001e5dc89b8bb23a13a5245207eeb239de69aaa05d7\",\"ID\":\"c08f407edd31\",\"MemPerc\":\"0.09%\",\"MemUsage\":\"7.023MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-124946-redis-1\",\"NetIO\":\"2.41MB / 2.65MB\",\"PIDs\":\"5\"}\n{\"BlockIO\":\"8.19kB / 1.87MB\",\"CPUPerc\":\"1.06%\",\"Container\":\"293154d15ac4ed1e9f41ce1f90f6d6f7ab19e527b34ecd4c4a0b140c608da5b7\",\"ID\":\"293154d15ac4\",\"MemPerc\":\"0.22%\",\"MemUsage\":\"17.45MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-124946-runtime-1\",\"NetIO\":\"23.1MB / 15.7MB\",\"PIDs\":\"17\"}\n",
+  "command": [
+    "docker",
+    "exec",
+    "5d4526ceb5d4fdbc09bd1c322f95302215c736adfd9a58f19e9d6b1eaa095803",
+    "/perf/msgmate-perf",
+    "-action",
+    "load",
+    "-rps",
+    "90",
+    "-duration",
+    "30s",
+    "-workers",
+    "2048"
+  ],
+  "passed": false,
+  "artifact": "001-queue-mysql-r90"
+}

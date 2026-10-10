@@ -1,0 +1,24 @@
+WRITE_ERRNO=111 Connection refused
+WRITE_ERRNO=111 Connection refused
+WRITE_ERRNO=111 Connection refused
+WRITE_ERRNO=111 Connection refused
+WRITE_ERRNO=111 Connection refused
+WRITE_ERRNO=111 Connection refused
+WRITE_ERRNO=111 Connection refused
+WRITE_ERRNO=111 Connection refused
+WRITE_ERRNO=111 Connection refused
+Running 10s test @ http://127.0.0.1:18109/msg/get_template?templateID=0ddd02e0-f1a8-4762-8980-6d27cda6dff8
+  4 threads and 32 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    44.92ms   25.25ms 231.98ms   83.32%
+    Req/Sec   163.54     73.70   430.00     66.48%
+  Latency Distribution
+     50%   38.07ms
+     75%   48.27ms
+     90%   79.10ms
+     99%  143.68ms
+  5972 requests in 10.01s, 1.96MB read
+  Socket errors: connect 0, read 0, write 154, timeout 0
+Requests/sec:    596.34
+Transfer/sec:    200.92KB
+BUSINESS ok=5972 bad=0

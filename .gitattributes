@@ -1,0 +1,2 @@
+# Preserve raw benchmark/tool output, including its trailing spaces.
+reports/**/*.txt -whitespace

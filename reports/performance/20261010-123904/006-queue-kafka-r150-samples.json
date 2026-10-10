@@ -1,0 +1,866 @@
+[
+  {
+    "elapsed": 2.000659583000015,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 32107,
+        "Pending": 149,
+        "Completed": 31958,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 4,
+        "Idle": 2,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 52
+      },
+      "goroutines": 208,
+      "heap_bytes": 8300408,
+      "mode_mysql": false,
+      "mysql_time_wait": 15,
+      "sink_calls": 31967,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:01.195105014Z"
+    }
+  },
+  {
+    "elapsed": 4.250477035000586,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 32437,
+        "Pending": 96,
+        "Completed": 32341,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 2,
+        "Idle": 4,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 52
+      },
+      "goroutines": 234,
+      "heap_bytes": 7153480,
+      "mode_mysql": false,
+      "mysql_time_wait": 15,
+      "sink_calls": 32349,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:03.398342169Z"
+    }
+  },
+  {
+    "elapsed": 6.453899008000008,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 32762,
+        "Pending": 71,
+        "Completed": 32691,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 3,
+        "Idle": 3,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 52
+      },
+      "goroutines": 252,
+      "heap_bytes": 11789472,
+      "mode_mysql": false,
+      "mysql_time_wait": 14,
+      "sink_calls": 32700,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:05.563836466Z"
+    }
+  },
+  {
+    "elapsed": 8.619650997001372,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 33093,
+        "Pending": 71,
+        "Completed": 33022,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 5,
+        "InUse": 0,
+        "Idle": 5,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 53
+      },
+      "goroutines": 276,
+      "heap_bytes": 8503368,
+      "mode_mysql": false,
+      "mysql_time_wait": 14,
+      "sink_calls": 33022,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:07.769792151Z"
+    }
+  },
+  {
+    "elapsed": 10.825210820001303,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 33423,
+        "Pending": 96,
+        "Completed": 33327,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 5,
+        "InUse": 1,
+        "Idle": 4,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 53
+      },
+      "goroutines": 301,
+      "heap_bytes": 11003640,
+      "mode_mysql": false,
+      "mysql_time_wait": 14,
+      "sink_calls": 33327,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:09.96907302Z"
+    }
+  },
+  {
+    "elapsed": 13.024509091001164,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 33773,
+        "Pending": 141,
+        "Completed": 33632,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 5,
+        "InUse": 1,
+        "Idle": 4,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 53
+      },
+      "goroutines": 346,
+      "heap_bytes": 8138440,
+      "mode_mysql": false,
+      "mysql_time_wait": 14,
+      "sink_calls": 33632,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:12.302115956Z"
+    }
+  },
+  {
+    "elapsed": 15.357260603001123,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 34107,
+        "Pending": 121,
+        "Completed": 33986,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 5,
+        "InUse": 2,
+        "Idle": 3,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 53
+      },
+      "goroutines": 223,
+      "heap_bytes": 7989952,
+      "mode_mysql": false,
+      "mysql_time_wait": 14,
+      "sink_calls": 33996,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:14.52994042Z"
+    }
+  },
+  {
+    "elapsed": 17.585785143000976,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 34444,
+        "Pending": 51,
+        "Completed": 34393,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 5,
+        "InUse": 1,
+        "Idle": 4,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 53
+      },
+      "goroutines": 256,
+      "heap_bytes": 7686856,
+      "mode_mysql": false,
+      "mysql_time_wait": 14,
+      "sink_calls": 34393,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:16.774859306Z"
+    }
+  },
+  {
+    "elapsed": 19.830536856001345,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 34779,
+        "Pending": 82,
+        "Completed": 34697,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 5,
+        "InUse": 1,
+        "Idle": 4,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 53
+      },
+      "goroutines": 287,
+      "heap_bytes": 10045672,
+      "mode_mysql": false,
+      "mysql_time_wait": 14,
+      "sink_calls": 34697,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:19.009195328Z"
+    }
+  },
+  {
+    "elapsed": 22.06436783600111,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 35111,
+        "Pending": 109,
+        "Completed": 35002,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 0,
+        "Idle": 6,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 53
+      },
+      "goroutines": 315,
+      "heap_bytes": 13043440,
+      "mode_mysql": false,
+      "mysql_time_wait": 14,
+      "sink_calls": 35002,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:21.222845935Z"
+    }
+  },
+  {
+    "elapsed": 24.27793844400003,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 35466,
+        "Pending": 141,
+        "Completed": 35325,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 4,
+        "Idle": 2,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 53
+      },
+      "goroutines": 214,
+      "heap_bytes": 10633832,
+      "mode_mysql": false,
+      "mysql_time_wait": 14,
+      "sink_calls": 35334,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:23.587246416Z"
+    }
+  },
+  {
+    "elapsed": 26.642331885001113,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 35813,
+        "Pending": 50,
+        "Completed": 35763,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 1,
+        "Idle": 5,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 53
+      },
+      "goroutines": 257,
+      "heap_bytes": 10866936,
+      "mode_mysql": false,
+      "mysql_time_wait": 14,
+      "sink_calls": 35763,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:25.906782624Z"
+    }
+  },
+  {
+    "elapsed": 28.96242835800149,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 36160,
+        "Pending": 93,
+        "Completed": 36067,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 7,
+        "InUse": 0,
+        "Idle": 7,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 53
+      },
+      "goroutines": 300,
+      "heap_bytes": 9072584,
+      "mode_mysql": false,
+      "mysql_time_wait": 11,
+      "sink_calls": 36067,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:28.21838182Z"
+    }
+  },
+  {
+    "elapsed": 31.274686353001016,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 36504,
+        "Pending": 130,
+        "Completed": 36374,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 5,
+        "InUse": 0,
+        "Idle": 5,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 58
+      },
+      "goroutines": 335,
+      "heap_bytes": 6762816,
+      "mode_mysql": false,
+      "mysql_time_wait": 11,
+      "sink_calls": 36374,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:30.511778605Z"
+    }
+  },
+  {
+    "elapsed": 33.56711715600068,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 36848,
+        "Pending": 116,
+        "Completed": 36732,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 5,
+        "InUse": 4,
+        "Idle": 1,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 58
+      },
+      "goroutines": 221,
+      "heap_bytes": 12642960,
+      "mode_mysql": false,
+      "mysql_time_wait": 11,
+      "sink_calls": 36741,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:32.806019552Z"
+    }
+  },
+  {
+    "elapsed": 35.86113921800097,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 37176,
+        "Pending": 68,
+        "Completed": 37108,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 3,
+        "Idle": 3,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 58
+      },
+      "goroutines": 243,
+      "heap_bytes": 10788800,
+      "mode_mysql": false,
+      "mysql_time_wait": 11,
+      "sink_calls": 37117,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:34.989342242Z"
+    }
+  },
+  {
+    "elapsed": 38.045504437001,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 37511,
+        "Pending": 67,
+        "Completed": 37444,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 0,
+        "Idle": 6,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 58
+      },
+      "goroutines": 274,
+      "heap_bytes": 7831136,
+      "mode_mysql": false,
+      "mysql_time_wait": 11,
+      "sink_calls": 37444,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:37.226052097Z"
+    }
+  },
+  {
+    "elapsed": 40.28126016000169,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 37846,
+        "Pending": 98,
+        "Completed": 37748,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 1,
+        "Idle": 5,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 58
+      },
+      "goroutines": 306,
+      "heap_bytes": 10755688,
+      "mode_mysql": false,
+      "mysql_time_wait": 11,
+      "sink_calls": 37748,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:39.459585225Z"
+    }
+  },
+  {
+    "elapsed": 42.516086381001514,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 38191,
+        "Pending": 137,
+        "Completed": 38054,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 0,
+        "Idle": 6,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 58
+      },
+      "goroutines": 343,
+      "heap_bytes": 7959600,
+      "mode_mysql": false,
+      "mysql_time_wait": 11,
+      "sink_calls": 38054,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:41.7571421Z"
+    }
+  },
+  {
+    "elapsed": 44.81265731300118,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 38529,
+        "Pending": 114,
+        "Completed": 38415,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 4,
+        "Idle": 2,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 58
+      },
+      "goroutines": 226,
+      "heap_bytes": 8251592,
+      "mode_mysql": false,
+      "mysql_time_wait": 11,
+      "sink_calls": 38427,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:44.013176714Z"
+    }
+  },
+  {
+    "elapsed": 47.0689889510013,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 38862,
+        "Pending": 51,
+        "Completed": 38811,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 0,
+        "Idle": 6,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 58
+      },
+      "goroutines": 254,
+      "heap_bytes": 7317936,
+      "mode_mysql": false,
+      "mysql_time_wait": 11,
+      "sink_calls": 38814,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:46.229652018Z"
+    }
+  },
+  {
+    "elapsed": 49.285833655001625,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 39197,
+        "Pending": 77,
+        "Completed": 39120,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 1,
+        "Idle": 5,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 58
+      },
+      "goroutines": 284,
+      "heap_bytes": 10143416,
+      "mode_mysql": false,
+      "mysql_time_wait": 11,
+      "sink_calls": 39120,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:48.466930098Z"
+    }
+  },
+  {
+    "elapsed": 51.52197525600059,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 39541,
+        "Pending": 116,
+        "Completed": 39425,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 5,
+        "InUse": 1,
+        "Idle": 4,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 59
+      },
+      "goroutines": 322,
+      "heap_bytes": 7246744,
+      "mode_mysql": false,
+      "mysql_time_wait": 12,
+      "sink_calls": 39425,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:50.762349641Z"
+    }
+  },
+  {
+    "elapsed": 53.817519242000344,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 39903,
+        "Pending": 107,
+        "Completed": 39796,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 5,
+        "InUse": 3,
+        "Idle": 2,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 59
+      },
+      "goroutines": 229,
+      "heap_bytes": 12743352,
+      "mode_mysql": false,
+      "mysql_time_wait": 12,
+      "sink_calls": 39806,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:53.173912293Z"
+    }
+  },
+  {
+    "elapsed": 56.22893503100022,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 40238,
+        "Pending": 53,
+        "Completed": 40185,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 7,
+        "InUse": 1,
+        "Idle": 6,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 59
+      },
+      "goroutines": 262,
+      "heap_bytes": 11123624,
+      "mode_mysql": false,
+      "mysql_time_wait": 12,
+      "sink_calls": 40187,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:55.419801237Z"
+    }
+  },
+  {
+    "elapsed": 58.476183186001435,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 40587,
+        "Pending": 96,
+        "Completed": 40491,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 6,
+        "InUse": 1,
+        "Idle": 5,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 60
+      },
+      "goroutines": 303,
+      "heap_bytes": 12996016,
+      "mode_mysql": false,
+      "mysql_time_wait": 9,
+      "sink_calls": 40491,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:44:57.733562978Z"
+    }
+  },
+  {
+    "elapsed": 60.78878910200001,
+    "stats": {
+      "consume": true,
+      "counts": {
+        "Total": 40800,
+        "Pending": 0,
+        "Completed": 40800,
+        "Failed": 0,
+        "Retries": 0
+      },
+      "db_pool": {
+        "MaxOpenConnections": 50,
+        "OpenConnections": 4,
+        "InUse": 0,
+        "Idle": 4,
+        "WaitCount": 0,
+        "WaitDuration": 0,
+        "MaxIdleClosed": 2,
+        "MaxIdleTimeClosed": 0,
+        "MaxLifetimeClosed": 63
+      },
+      "goroutines": 45,
+      "heap_bytes": 12321344,
+      "mode_mysql": false,
+      "mysql_time_wait": 10,
+      "sink_calls": 40800,
+      "sink_delay_ms": 0,
+      "stats_error": "",
+      "time": "2026-10-10T04:45:00.205364245Z"
+    }
+  }
+]

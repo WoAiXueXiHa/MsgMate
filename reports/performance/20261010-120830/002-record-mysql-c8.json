@@ -1,0 +1,93 @@
+{
+  "ok": 154890,
+  "bad": 0,
+  "requests": 154890,
+  "duration_us": 15099363,
+  "p50_ms": 0.711,
+  "p99_ms": 1.574,
+  "connect": 0,
+  "read": 0,
+  "write": 0,
+  "timeout": 0,
+  "http_errors": 0,
+  "rps": 10258.048634237086,
+  "suite": "record",
+  "mode": "mysql",
+  "concurrency": 8,
+  "duration": 15,
+  "verify": false,
+  "before": {
+    "consume": false,
+    "counts": {
+      "Total": 0,
+      "Pending": 0,
+      "Completed": 0,
+      "Failed": 0,
+      "Retries": 0
+    },
+    "db_pool": {
+      "MaxOpenConnections": 50,
+      "OpenConnections": 5,
+      "InUse": 0,
+      "Idle": 5,
+      "WaitCount": 0,
+      "WaitDuration": 0,
+      "MaxIdleClosed": 0,
+      "MaxIdleTimeClosed": 0,
+      "MaxLifetimeClosed": 0
+    },
+    "goroutines": 12,
+    "heap_bytes": 5202504,
+    "mode_mysql": true,
+    "sink_calls": 0,
+    "sink_delay_ms": 0,
+    "time": "2026-10-10T04:09:18.407623804Z"
+  },
+  "after": {
+    "consume": false,
+    "counts": {
+      "Total": 0,
+      "Pending": 0,
+      "Completed": 0,
+      "Failed": 0,
+      "Retries": 0
+    },
+    "db_pool": {
+      "MaxOpenConnections": 50,
+      "OpenConnections": 9,
+      "InUse": 0,
+      "Idle": 9,
+      "WaitCount": 0,
+      "WaitDuration": 0,
+      "MaxIdleClosed": 0,
+      "MaxIdleTimeClosed": 0,
+      "MaxLifetimeClosed": 5
+    },
+    "goroutines": 16,
+    "heap_bytes": 4730832,
+    "mode_mysql": true,
+    "sink_calls": 0,
+    "sink_delay_ms": 0,
+    "time": "2026-10-10T04:09:36.279161829Z"
+  },
+  "command": [
+    "docker",
+    "exec",
+    "91971b664a0360c018e050ce3444da21b9bea720c52a3ef9a0ff236329e9a709",
+    "/perf/wrk",
+    "-t4",
+    "-c8",
+    "-d15s",
+    "--timeout",
+    "2s",
+    "--latency",
+    "-s",
+    "/perf/wrk.lua",
+    "http://runtime:18081",
+    "--",
+    "record"
+  ],
+  "resources": "{\"BlockIO\":\"88.2MB / 205kB\",\"CPUPerc\":\"0.85%\",\"Container\":\"c2ae8c41864adb38e16e66c6a331a288594c0e5d421610d7b11f583dba2da147\",\"ID\":\"c2ae8c41864a\",\"MemPerc\":\"4.52%\",\"MemUsage\":\"352.2MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-120830-kafka-1\",\"NetIO\":\"11.2kB / 11kB\",\"PIDs\":\"98\"}\n{\"BlockIO\":\"1.52MB / 0B\",\"CPUPerc\":\"0.00%\",\"Container\":\"91971b664a0360c018e050ce3444da21b9bea720c52a3ef9a0ff236329e9a709\",\"ID\":\"91971b664a03\",\"MemPerc\":\"0.06%\",\"MemUsage\":\"4.402MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-120830-load-1\",\"NetIO\":\"89.9MB / 42.4MB\",\"PIDs\":\"1\"}\n{\"BlockIO\":\"26.1MB / 297MB\",\"CPUPerc\":\"0.57%\",\"Container\":\"415dc347f682519f8285b8f599ebee0834ac9c3dfd30e77a0d6d88224d0345f3\",\"ID\":\"415dc347f682\",\"MemPerc\":\"5.56%\",\"MemUsage\":\"433.1MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-120830-mysql-1\",\"NetIO\":\"83.8MB / 606MB\",\"PIDs\":\"48\"}\n{\"BlockIO\":\"3.7MB / 0B\",\"CPUPerc\":\"0.16%\",\"Container\":\"a9b622c37e73127a8583902fb37d21ef73e639620cd27c54d0e6e09ffdffebd1\",\"ID\":\"a9b622c37e73\",\"MemPerc\":\"0.09%\",\"MemUsage\":\"7.312MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-120830-redis-1\",\"NetIO\":\"2.77kB / 710B\",\"PIDs\":\"5\"}\n{\"BlockIO\":\"8.19kB / 35.1MB\",\"CPUPerc\":\"0.00%\",\"Container\":\"be66b3003b241696528448ea42a5cd25ea49eff67900eab45230ab99769be38c\",\"ID\":\"be66b3003b24\",\"MemPerc\":\"0.29%\",\"MemUsage\":\"22.36MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-120830-runtime-1\",\"NetIO\":\"649MB / 174MB\",\"PIDs\":\"29\"}\n{\"BlockIO\":\"50.8MB / 250kB\",\"CPUPerc\":\"0.11%\",\"Container\":\"6854f436af5026e9edc1ec4a2f253dc362f2c2606b9d67ac9273582d25762218\",\"ID\":\"6854f436af50\",\"MemPerc\":\"1.61%\",\"MemUsage\":\"125.4MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-120830-zookeeper-1\",\"NetIO\":\"12.3kB / 9.91kB\",\"PIDs\":\"132\"}\n",
+  "passed": true,
+  "artifact": "002-record-mysql-c8"
+}

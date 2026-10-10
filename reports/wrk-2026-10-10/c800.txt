@@ -1,0 +1,15 @@
+Running 10s test @ http://127.0.0.1:18109/msg/get_template?templateID=0ddd02e0-f1a8-4762-8980-6d27cda6dff8
+  4 threads and 800 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     0.00us    0.00us   0.00us    -nan%
+    Req/Sec     0.00      0.00     0.00      -nan%
+  Latency Distribution
+     50%    0.00us
+     75%    0.00us
+     90%    0.00us
+     99%    0.00us
+  0 requests in 10.03s, 0.00B read
+  Socket errors: connect 0, read 0, write 14685, timeout 0
+Requests/sec:      0.00
+Transfer/sec:       0.00B
+BUSINESS ok=0 bad=0

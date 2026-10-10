@@ -1,0 +1,274 @@
+zookeeper-1  | [2026-10-10 04:17:27,324] INFO   ______                  _                                           (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,324] INFO  |___  /                 | |                                          (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,325] INFO     / /    ___     ___   | | __   ___    ___   _ __     ___   _ __    (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,325] INFO    / /    / _ \   / _ \  | |/ /  / _ \  / _ \ | '_ \   / _ \ | '__| (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,325] INFO   / /__  | (_) | | (_) | |   <  |  __/ |  __/ | |_) | |  __/ | |     (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,325] INFO  /_____|  \___/   \___/  |_|\_\  \___|  \___| | .__/   \___| |_| (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,325] INFO                                               | |                      (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,325] INFO                                               |_|                      (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,325] INFO  (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,327] INFO Server environment:zookeeper.version=3.8.4-9316c2a7a97e1666d8f4593f34dd6fc36ecc436c, built on 2024-02-12 22:16 UTC (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,327] INFO Server environment:host.name=ef28672e9e77 (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,327] INFO Server environment:java.version=11.0.22 (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,327] INFO Server environment:java.vendor=Azul Systems, Inc. (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,327] INFO Server environment:java.home=/usr/lib/jvm/java-11-zulu-openjdk-ca (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,327] INFO Server environment:java.class.path=/usr/bin/../share/java/kafka/jackson-dataformat-csv-2.13.5.jar:/usr/bin/../share/java/kafka/jetty-server-9.4.54.v20240208.jar:/usr/bin/../share/java/kafka/javax.activation-api-1.2.0.jar:/usr/bin/../share/java/kafka/jetty-security-9.4.54.v20240208.jar:/usr/bin/../share/java/kafka/jersey-hk2-2.39.1.jar:/usr/bin/../share/java/kafka/netty-transport-native-epoll-4.1.100.Final.jar:/usr/bin/../share/java/kafka/kafka-storage-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/commons-collections-3.2.2.jar:/usr/bin/../share/java/kafka/checker-qual-3.19.0.jar:/usr/bin/../share/java/kafka/maven-artifact-3.8.8.jar:/usr/bin/../share/java/kafka/zookeeper-3.8.4.jar:/usr/bin/../share/java/kafka/commons-digester-2.1.jar:/usr/bin/../share/java/kafka/jline-3.25.1.jar:/usr/bin/../share/java/kafka/argparse4j-0.7.0.jar:/usr/bin/../share/java/kafka/jakarta.xml.bind-api-2.3.3.jar:/usr/bin/../share/java/kafka/hk2-utils-2.6.1.jar:/usr/bin/../share/java/kafka/metrics-core-4.1.12.1.jar:/usr/bin/../share/java/kafka/slf4j-api-1.7.36.jar:/usr/bin/../share/java/kafka/reflections-0.10.2.jar:/usr/bin/../share/java/kafka/kafka-streams-scala_2.13-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/error_prone_annotations-2.10.0.jar:/usr/bin/../share/java/kafka/jopt-simple-5.0.4.jar:/usr/bin/../share/java/kafka/kafka-shell-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/osgi-resource-locator-1.0.3.jar:/usr/bin/../share/java/kafka/rocksdbjni-7.9.2.jar:/usr/bin/../share/java/kafka/jersey-client-2.39.1.jar:/usr/bin/../share/java/kafka/jetty-http-9.4.54.v20240208.jar:/usr/bin/../share/java/kafka/jackson-core-2.13.5.jar:/usr/bin/../share/java/kafka/netty-common-4.1.100.Final.jar:/usr/bin/../share/java/kafka/netty-codec-4.1.100.Final.jar:/usr/bin/../share/java/kafka/jersey-container-servlet-core-2.39.1.jar:/usr/bin/../share/java/kafka/javax.servlet-api-3.1.0.jar:/usr/bin/../share/java/kafka/kafka.jar:/usr/bin/../share/java/kafka/activation-1.1.1.jar:/usr/bin/../share/java/kafka/netty-resolver-4.1.100.Final.jar:/usr/bin/../share/java/kafka/kafka-tools-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/jakarta.activation-api-1.2.2.jar:/usr/bin/../share/java/kafka/jersey-common-2.39.1.jar:/usr/bin/../share/java/kafka/jetty-servlets-9.4.54.v20240208.jar:/usr/bin/../share/java/kafka/caffeine-2.9.3.jar:/usr/bin/../share/java/kafka/kafka-streams-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/netty-transport-native-unix-common-4.1.100.Final.jar:/usr/bin/../share/java/kafka/kafka-raft-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/jetty-util-9.4.54.v20240208.jar:/usr/bin/../share/java/kafka/jackson-datatype-jdk8-2.13.5.jar:/usr/bin/../share/java/kafka/jose4j-0.9.4.jar:/usr/bin/../share/java/kafka/jetty-continuation-9.4.54.v20240208.jar:/usr/bin/../share/java/kafka/jsr305-3.0.2.jar:/usr/bin/../share/java/kafka/jersey-container-servlet-2.39.1.jar:/usr/bin/../share/java/kafka/kafka-server-common-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/kafka-clients-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/pcollections-4.0.1.jar:/usr/bin/../share/java/kafka/javax.ws.rs-api-2.1.1.jar:/usr/bin/../share/java/kafka/scala-reflect-2.13.11.jar:/usr/bin/../share/java/kafka/connect-api-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/commons-beanutils-1.9.4.jar:/usr/bin/../share/java/kafka/metrics-core-2.2.0.jar:/usr/bin/../share/java/kafka/connect-transforms-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/jackson-annotations-2.13.5.jar:/usr/bin/../share/java/kafka/scala-collection-compat_2.13-2.10.0.jar:/usr/bin/../share/java/kafka/jakarta.annotation-api-1.3.5.jar:/usr/bin/../share/java/kafka/scala-library-2.13.11.jar:/usr/bin/../share/java/kafka/kafka-log4j-appender-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/jetty-io-9.4.54.v20240208.jar:/usr/bin/../share/java/kafka/commons-cli-1.4.jar:/usr/bin/../share/java/kafka/kafka-storage-api-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/connect-mirror-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/trogdor-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/kafka-metadata-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/scala-logging_2.13-3.9.4.jar:/usr/bin/../share/java/kafka/netty-buffer-4.1.100.Final.jar:/usr/bin/../share/java/kafka/jetty-servlet-9.4.54.v20240208.jar:/usr/bin/../share/java/kafka/connect-basic-auth-extension-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/commons-validator-1.7.jar:/usr/bin/../share/java/kafka/netty-handler-4.1.100.Final.jar:/usr/bin/../share/java/kafka/jakarta.inject-2.6.1.jar:/usr/bin/../share/java/kafka/jackson-databind-2.13.5.jar:/usr/bin/../share/java/kafka/zstd-jni-1.5.5-1.jar:/usr/bin/../share/java/kafka/kafka-streams-test-utils-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/commons-logging-1.2.jar:/usr/bin/../share/java/kafka/jackson-module-scala_2.13-2.13.5.jar:/usr/bin/../share/java/kafka/jersey-server-2.39.1.jar:/usr/bin/../share/java/kafka/scala-java8-compat_2.13-1.0.2.jar:/usr/bin/../share/java/kafka/swagger-annotations-2.2.8.jar:/usr/bin/../share/java/kafka/kafka-streams-examples-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/lz4-java-1.8.0.jar:/usr/bin/../share/java/kafka/jakarta.ws.rs-api-2.1.6.jar:/usr/bin/../share/java/kafka/commons-io-2.11.0.jar:/usr/bin/../share/java/kafka/jackson-jaxrs-json-provider-2.13.5.jar:/usr/bin/../share/java/kafka/connect-mirror-client-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/jackson-jaxrs-base-2.13.5.jar:/usr/bin/../share/java/kafka/hk2-locator-2.6.1.jar:/usr/bin/../share/java/kafka/jaxb-api-2.3.1.jar:/usr/bin/../share/java/kafka/jetty-client-9.4.54.v20240208.jar:/usr/bin/../share/java/kafka/commons-lang3-3.8.1.jar:/usr/bin/../share/java/kafka/aopalliance-repackaged-2.6.1.jar:/usr/bin/../share/java/kafka/jakarta.validation-api-2.0.2.jar:/usr/bin/../share/java/kafka/kafka_2.13-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/paranamer-2.8.jar:/usr/bin/../share/java/kafka/connect-json-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/netty-transport-4.1.100.Final.jar:/usr/bin/../share/java/kafka/kafka-tools-api-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/jackson-module-jaxb-annotations-2.13.5.jar:/usr/bin/../share/java/kafka/snappy-java-1.1.10.5.jar:/usr/bin/../share/java/kafka/connect-runtime-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/kafka-group-coordinator-7.6.1-ccs.jar:/usr/bin/../share/java/kafka/javassist-3.29.2-GA.jar:/usr/bin/../share/java/kafka/reload4j-1.2.25.jar:/usr/bin/../share/java/kafka/slf4j-reload4j-1.7.36.jar:/usr/bin/../share/java/kafka/zookeeper-jute-3.8.4.jar:/usr/bin/../share/java/kafka/jetty-util-ajax-9.4.54.v20240208.jar:/usr/bin/../share/java/kafka/hk2-api-2.6.1.jar:/usr/bin/../share/java/kafka/netty-transport-classes-epoll-4.1.100.Final.jar:/usr/bin/../share/java/kafka/audience-annotations-0.12.0.jar:/usr/bin/../share/java/kafka/plexus-utils-3.3.1.jar:/usr/bin/../share/java/kafka/javax.annotation-api-1.3.2.jar:/usr/bin/../share/java/confluent-telemetry/* (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,327] INFO Server environment:java.library.path=/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,327] INFO Server environment:java.io.tmpdir=/tmp (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,327] INFO Server environment:java.compiler=<NA> (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,327] INFO Server environment:os.name=Linux (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,327] INFO Server environment:os.arch=amd64 (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,327] INFO Server environment:os.version=6.18.35.2-microsoft-standard-WSL2 (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO Server environment:user.name=appuser (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO Server environment:user.home=/home/appuser (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO Server environment:user.dir=/home/appuser (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO Server environment:os.memory.free=118MB (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO Server environment:os.memory.max=256MB (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO Server environment:os.memory.total=128MB (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO zookeeper.enableEagerACLCheck = false (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO zookeeper.digest.enabled = true (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO zookeeper.closeSessionTxn.enabled = true (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO zookeeper.flushDelay = 0 ms (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO zookeeper.maxWriteQueuePollTime = 0 ms (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO zookeeper.maxBatchSize=1000 (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,328] INFO zookeeper.intBufferStartingSizeBytes = 1024 (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,329] INFO Weighed connection throttling is disabled (org.apache.zookeeper.server.BlueThrottle)
+zookeeper-1  | [2026-10-10 04:17:27,330] INFO minSessionTimeout set to 6000 ms (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,330] INFO maxSessionTimeout set to 60000 ms (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,330] INFO getData response cache size is initialized with value 400. (org.apache.zookeeper.server.ResponseCache)
+zookeeper-1  | [2026-10-10 04:17:27,330] INFO getChildren response cache size is initialized with value 400. (org.apache.zookeeper.server.ResponseCache)
+zookeeper-1  | [2026-10-10 04:17:27,332] INFO zookeeper.pathStats.slotCapacity = 60 (org.apache.zookeeper.server.util.RequestPathMetricsCollector)
+zookeeper-1  | [2026-10-10 04:17:27,332] INFO zookeeper.pathStats.slotDuration = 15 (org.apache.zookeeper.server.util.RequestPathMetricsCollector)
+zookeeper-1  | [2026-10-10 04:17:27,332] INFO zookeeper.pathStats.maxDepth = 6 (org.apache.zookeeper.server.util.RequestPathMetricsCollector)
+zookeeper-1  | [2026-10-10 04:17:27,332] INFO zookeeper.pathStats.initialDelay = 5 (org.apache.zookeeper.server.util.RequestPathMetricsCollector)
+zookeeper-1  | [2026-10-10 04:17:27,332] INFO zookeeper.pathStats.delay = 5 (org.apache.zookeeper.server.util.RequestPathMetricsCollector)
+zookeeper-1  | [2026-10-10 04:17:27,332] INFO zookeeper.pathStats.enabled = false (org.apache.zookeeper.server.util.RequestPathMetricsCollector)
+zookeeper-1  | [2026-10-10 04:17:27,334] INFO The max bytes for all large requests are set to 104857600 (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,335] INFO The large request threshold is set to -1 (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,335] INFO zookeeper.enforce.auth.enabled = false (org.apache.zookeeper.server.AuthenticationHelper)
+zookeeper-1  | [2026-10-10 04:17:27,335] INFO zookeeper.enforce.auth.schemes = [] (org.apache.zookeeper.server.AuthenticationHelper)
+zookeeper-1  | [2026-10-10 04:17:27,335] INFO Created server with tickTime 3000 ms minSessionTimeout 6000 ms maxSessionTimeout 60000 ms clientPortListenBacklog -1 datadir /var/lib/zookeeper/log/version-2 snapdir /var/lib/zookeeper/data/version-2 (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,362] INFO Logging initialized @535ms to org.eclipse.jetty.util.log.Slf4jLog (org.eclipse.jetty.util.log)
+zookeeper-1  | [2026-10-10 04:17:27,450] WARN o.e.j.s.ServletContextHandler@7dc3712{/,null,STOPPED} contextPath ends with /* (org.eclipse.jetty.server.handler.ContextHandler)
+zookeeper-1  | [2026-10-10 04:17:27,451] WARN Empty contextPath (org.eclipse.jetty.server.handler.ContextHandler)
+zookeeper-1  | [2026-10-10 04:17:27,469] INFO jetty-9.4.54.v20240208; built: 2024-02-08T19:42:39.027Z; git: cef3fbd6d736a21e7d541a5db490381d95a2047d; jvm 11.0.22+7-LTS (org.eclipse.jetty.server.Server)
+zookeeper-1  | [2026-10-10 04:17:27,493] INFO DefaultSessionIdManager workerName=node0 (org.eclipse.jetty.server.session)
+zookeeper-1  | [2026-10-10 04:17:27,493] INFO No SessionScavenger set, using defaults (org.eclipse.jetty.server.session)
+zookeeper-1  | [2026-10-10 04:17:27,494] INFO node0 Scavenging every 600000ms (org.eclipse.jetty.server.session)
+zookeeper-1  | [2026-10-10 04:17:27,497] WARN ServletContext@o.e.j.s.ServletContextHandler@7dc3712{/,null,STARTING} has uncovered http methods for path: /* (org.eclipse.jetty.security.SecurityHandler)
+zookeeper-1  | [2026-10-10 04:17:27,503] INFO Started o.e.j.s.ServletContextHandler@7dc3712{/,null,AVAILABLE} (org.eclipse.jetty.server.handler.ContextHandler)
+zookeeper-1  | [2026-10-10 04:17:27,522] INFO Started ServerConnector@5a59ca5e{HTTP/1.1, (http/1.1)}{0.0.0.0:8080} (org.eclipse.jetty.server.AbstractConnector)
+zookeeper-1  | [2026-10-10 04:17:27,522] INFO Started @695ms (org.eclipse.jetty.server.Server)
+zookeeper-1  | [2026-10-10 04:17:27,522] INFO Started AdminServer on address 0.0.0.0, port 8080 and command URL /commands (org.apache.zookeeper.server.admin.JettyAdminServer)
+zookeeper-1  | [2026-10-10 04:17:27,527] INFO Using org.apache.zookeeper.server.NIOServerCnxnFactory as server connection factory (org.apache.zookeeper.server.ServerCnxnFactory)
+zookeeper-1  | [2026-10-10 04:17:27,528] WARN maxCnxns is not configured, using default value 0. (org.apache.zookeeper.server.ServerCnxnFactory)
+zookeeper-1  | [2026-10-10 04:17:27,529] INFO Configuring NIO connection handler with 10s sessionless connection timeout, 4 selector thread(s), 64 worker threads, and 64 kB direct buffers. (org.apache.zookeeper.server.NIOServerCnxnFactory)
+zookeeper-1  | [2026-10-10 04:17:27,530] INFO binding to port 0.0.0.0/0.0.0.0:2181 (org.apache.zookeeper.server.NIOServerCnxnFactory)
+zookeeper-1  | [2026-10-10 04:17:27,545] INFO Using org.apache.zookeeper.server.watch.WatchManager as watch manager (org.apache.zookeeper.server.watch.WatchManagerFactory)
+zookeeper-1  | [2026-10-10 04:17:27,545] INFO Using org.apache.zookeeper.server.watch.WatchManager as watch manager (org.apache.zookeeper.server.watch.WatchManagerFactory)
+zookeeper-1  | [2026-10-10 04:17:27,546] INFO zookeeper.snapshotSizeFactor = 0.33 (org.apache.zookeeper.server.ZKDatabase)
+zookeeper-1  | [2026-10-10 04:17:27,546] INFO zookeeper.commitLogCount=500 (org.apache.zookeeper.server.ZKDatabase)
+zookeeper-1  | [2026-10-10 04:17:27,551] INFO zookeeper.snapshot.compression.method = CHECKED (org.apache.zookeeper.server.persistence.SnapStream)
+zookeeper-1  | [2026-10-10 04:17:27,551] INFO Snapshotting: 0x0 to /var/lib/zookeeper/data/version-2/snapshot.0 (org.apache.zookeeper.server.persistence.FileTxnSnapLog)
+zookeeper-1  | [2026-10-10 04:17:27,554] INFO Snapshot loaded in 9 ms, highest zxid is 0x0, digest is 1371985504 (org.apache.zookeeper.server.ZKDatabase)
+zookeeper-1  | [2026-10-10 04:17:27,555] INFO Snapshotting: 0x0 to /var/lib/zookeeper/data/version-2/snapshot.0 (org.apache.zookeeper.server.persistence.FileTxnSnapLog)
+zookeeper-1  | [2026-10-10 04:17:27,555] INFO Snapshot taken in 0 ms (org.apache.zookeeper.server.ZooKeeperServer)
+zookeeper-1  | [2026-10-10 04:17:27,562] INFO PrepRequestProcessor (sid:0) started, reconfigEnabled=false (org.apache.zookeeper.server.PrepRequestProcessor)
+zookeeper-1  | [2026-10-10 04:17:27,562] INFO zookeeper.request_throttler.shutdownTimeout = 10000 ms (org.apache.zookeeper.server.RequestThrottler)
+zookeeper-1  | [2026-10-10 04:17:27,575] INFO Using checkIntervalMs=60000 maxPerMinute=10000 maxNeverUsedIntervalMs=0 (org.apache.zookeeper.server.ContainerManager)
+zookeeper-1  | [2026-10-10 04:17:27,575] INFO ZooKeeper audit is disabled. (org.apache.zookeeper.audit.ZKAuditProvider)
+zookeeper-1  | [2026-10-10 04:17:28,558] INFO Creating new log file: log.1 (org.apache.zookeeper.server.persistence.FileTxnLog)
+runtime-1    | BENCHMARK ONLY mysql=false consume=true fake_channel_delay=0s
+redis-1      | 1:C 10 Oct 2026 04:17:22.893 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+redis-1      | 1:C 10 Oct 2026 04:17:22.893 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+redis-1      | 1:C 10 Oct 2026 04:17:22.893 * Redis version=7.2.14, bits=64, commit=00000000, modified=0, pid=1, just started
+redis-1      | 1:C 10 Oct 2026 04:17:22.893 * Configuration loaded
+redis-1      | 1:M 10 Oct 2026 04:17:22.893 * Increased maximum number of open files to 10032 (it was originally set to 1024).
+redis-1      | 1:M 10 Oct 2026 04:17:22.893 * monotonic clock: POSIX clock_gettime
+redis-1      | 1:M 10 Oct 2026 04:17:22.894 * Running mode=standalone, port=6379.
+redis-1      | 1:M 10 Oct 2026 04:17:22.936 * Server initialized
+redis-1      | 1:M 10 Oct 2026 04:17:22.936 * Ready to accept connections tcp
+redis-1      | 1:M 10 Oct 2026 04:21:31.474 * 10000 changes in 60 seconds. Saving...
+redis-1      | 1:M 10 Oct 2026 04:21:31.474 * Background saving started by pid 15
+redis-1      | 15:C 10 Oct 2026 04:21:31.480 * DB saved on disk
+redis-1      | 15:C 10 Oct 2026 04:21:31.480 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1      | 1:M 10 Oct 2026 04:21:31.575 * Background saving terminated with success
+redis-1      | 1:M 10 Oct 2026 04:22:32.043 * 10000 changes in 60 seconds. Saving...
+redis-1      | 1:M 10 Oct 2026 04:22:32.043 * Background saving started by pid 16
+redis-1      | 16:C 10 Oct 2026 04:22:32.057 * DB saved on disk
+redis-1      | 16:C 10 Oct 2026 04:22:32.057 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1      | 1:M 10 Oct 2026 04:22:32.144 * Background saving terminated with success
+redis-1      | 1:M 10 Oct 2026 04:23:33.063 * 10000 changes in 60 seconds. Saving...
+redis-1      | 1:M 10 Oct 2026 04:23:33.064 * Background saving started by pid 17
+redis-1      | 17:C 10 Oct 2026 04:23:33.068 * DB saved on disk
+redis-1      | 17:C 10 Oct 2026 04:23:33.069 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1      | 1:M 10 Oct 2026 04:23:33.165 * Background saving terminated with success
+redis-1      | 1:M 10 Oct 2026 04:24:34.074 * 10000 changes in 60 seconds. Saving...
+redis-1      | 1:M 10 Oct 2026 04:24:34.075 * Background saving started by pid 18
+redis-1      | 18:C 10 Oct 2026 04:24:34.082 * DB saved on disk
+redis-1      | 18:C 10 Oct 2026 04:24:34.083 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1      | 1:M 10 Oct 2026 04:24:34.175 * Background saving terminated with success
+redis-1      | 1:M 10 Oct 2026 04:25:35.030 * 10000 changes in 60 seconds. Saving...
+redis-1      | 1:M 10 Oct 2026 04:25:35.031 * Background saving started by pid 25
+redis-1      | 25:C 10 Oct 2026 04:25:35.038 * DB saved on disk
+redis-1      | 25:C 10 Oct 2026 04:25:35.038 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1      | 1:M 10 Oct 2026 04:25:35.133 * Background saving terminated with success
+redis-1      | 1:M 10 Oct 2026 04:28:28.368 * 10000 changes in 60 seconds. Saving...
+redis-1      | 1:M 10 Oct 2026 04:28:28.368 * Background saving started by pid 26
+redis-1      | 26:C 10 Oct 2026 04:28:28.372 * DB saved on disk
+redis-1      | 26:C 10 Oct 2026 04:28:28.372 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1      | 1:M 10 Oct 2026 04:28:28.469 * Background saving terminated with success
+redis-1      | 1:M 10 Oct 2026 04:30:37.991 * 10000 changes in 60 seconds. Saving...
+redis-1      | 1:M 10 Oct 2026 04:30:37.991 * Background saving started by pid 27
+redis-1      | 27:C 10 Oct 2026 04:30:37.998 * DB saved on disk
+redis-1      | 27:C 10 Oct 2026 04:30:37.998 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1      | 1:M 10 Oct 2026 04:30:38.092 * Background saving terminated with success
+redis-1      | 1:M 10 Oct 2026 04:33:08.500 * 10000 changes in 60 seconds. Saving...
+redis-1      | 1:M 10 Oct 2026 04:33:08.500 * Background saving started by pid 34
+redis-1      | 34:C 10 Oct 2026 04:33:08.505 * DB saved on disk
+redis-1      | 34:C 10 Oct 2026 04:33:08.505 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1      | 1:M 10 Oct 2026 04:33:08.601 * Background saving terminated with success
+redis-1      | 1:M 10 Oct 2026 04:34:09.078 * 10000 changes in 60 seconds. Saving...
+redis-1      | 1:M 10 Oct 2026 04:34:09.078 * Background saving started by pid 35
+redis-1      | 35:C 10 Oct 2026 04:34:09.084 * DB saved on disk
+redis-1      | 35:C 10 Oct 2026 04:34:09.085 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1      | 1:M 10 Oct 2026 04:34:09.178 * Background saving terminated with success
+redis-1      | 1:M 10 Oct 2026 04:35:10.037 * 10000 changes in 60 seconds. Saving...
+redis-1      | 1:M 10 Oct 2026 04:35:10.038 * Background saving started by pid 36
+redis-1      | 36:C 10 Oct 2026 04:35:10.041 * DB saved on disk
+redis-1      | 36:C 10 Oct 2026 04:35:10.041 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1      | 1:M 10 Oct 2026 04:35:10.138 * Background saving terminated with success
+redis-1      | 1:M 10 Oct 2026 04:36:11.030 * 10000 changes in 60 seconds. Saving...
+redis-1      | 1:M 10 Oct 2026 04:36:11.031 * Background saving started by pid 43
+redis-1      | 43:C 10 Oct 2026 04:36:11.038 * DB saved on disk
+redis-1      | 43:C 10 Oct 2026 04:36:11.039 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB
+redis-1      | 1:M 10 Oct 2026 04:36:11.132 * Background saving terminated with success
+kafka-1      | [2026-10-10 04:35:51,309] INFO [Broker id=1001] Stopped fetchers as part of LeaderAndIsr request correlationId 13 from controller 1001 epoch 1 as part of the become-leader transition for 1 partitions (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,311] INFO [LogLoader partition=perf_kafka_queue_retry-0, dir=/var/lib/kafka/data] Loading producer state till offset 0 with message format version 2 (kafka.log.UnifiedLog$)
+kafka-1      | [2026-10-10 04:35:51,312] INFO Created log for partition perf_kafka_queue_retry-0 in /var/lib/kafka/data/perf_kafka_queue_retry-0 with properties {} (kafka.log.LogManager)
+kafka-1      | [2026-10-10 04:35:51,312] INFO [Controller id=1001] New topics: [HashSet(perf_kafka_queue_middle)], deleted topics: [HashSet()], new partition replica assignment [Set(TopicIdReplicaAssignment(perf_kafka_queue_middle,Some(W8Ai-CDCQiOHQOT1cDkLag),Map(perf_kafka_queue_middle-0 -> ReplicaAssignment(replicas=1001, addingReplicas=, removingReplicas=))))] (kafka.controller.KafkaController)
+kafka-1      | [2026-10-10 04:35:51,312] INFO [Controller id=1001] New partition creation callback for perf_kafka_queue_middle-0 (kafka.controller.KafkaController)
+kafka-1      | [2026-10-10 04:35:51,312] INFO [Controller id=1001 epoch=1] Changed partition perf_kafka_queue_middle-0 state from NonExistentPartition to NewPartition with assigned replicas 1001 (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,312] INFO [Controller id=1001 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,312] INFO [Partition perf_kafka_queue_retry-0 broker=1001] No checkpointed highwatermark is found for partition perf_kafka_queue_retry-0 (kafka.cluster.Partition)
+kafka-1      | [2026-10-10 04:35:51,312] INFO [Partition perf_kafka_queue_retry-0 broker=1001] Log loaded for partition perf_kafka_queue_retry-0 with initial high watermark 0 (kafka.cluster.Partition)
+kafka-1      | [2026-10-10 04:35:51,312] TRACE [Controller id=1001 epoch=1] Changed state of replica 1001 for partition perf_kafka_queue_middle-0 from NonExistentReplica to NewReplica (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,312] INFO [Controller id=1001 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,312] INFO [Broker id=1001] Leader perf_kafka_queue_retry-0 with topic id Some(tHryhZO5QSenMXK86QjhDA) starts at leader epoch 0 from offset 0 with partition epoch 0, high watermark 0, ISR [1001], adding replicas [] and removing replicas [] . Previous leader None and previous leader epoch was -1. (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,318] TRACE [Broker id=1001] Completed LeaderAndIsr request correlationId 13 from controller 1001 epoch 1 for the become-leader transition for partition perf_kafka_queue_retry-0 (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,318] INFO [Broker id=1001] Finished LeaderAndIsr request in 10ms correlationId 13 from controller 1001 for 1 partitions (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,318] TRACE [Controller id=1001 epoch=1] Received response LeaderAndIsrResponseData(errorCode=0, partitionErrors=[], topics=[LeaderAndIsrTopicError(topicId=tHryhZO5QSenMXK86QjhDA, partitionErrors=[LeaderAndIsrPartitionError(topicName='', partitionIndex=0, errorCode=0)])]) for request LEADER_AND_ISR with correlation id 13 sent to broker kafka:9092 (id: 1001 rack: null) (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,319] TRACE [Broker id=1001] Cached leader info UpdateMetadataPartitionState(topicName='perf_kafka_queue_retry', partitionIndex=0, controllerEpoch=1, leader=1001, leaderEpoch=0, isr=[1001], zkVersion=0, replicas=[1001], offlineReplicas=[]) for partition perf_kafka_queue_retry-0 in response to UpdateMetadata request sent by controller 1001 epoch 1 with correlation id 14 (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,319] INFO [Broker id=1001] Add 1 partitions and deleted 0 partitions from metadata cache in response to UpdateMetadata request sent by controller 1001 epoch 1 with correlation id 14 (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,320] TRACE [Controller id=1001 epoch=1] Received response UpdateMetadataResponseData(errorCode=0) for request UPDATE_METADATA with correlation id 14 sent to broker kafka:9092 (id: 1001 rack: null) (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,320] INFO [Controller id=1001 epoch=1] Changed partition perf_kafka_queue_middle-0 from NewPartition to OnlinePartition with state LeaderAndIsr(leader=1001, leaderEpoch=0, isrWithBrokerEpoch=List(BrokerState(brokerId=1001, brokerEpoch=-1)), leaderRecoveryState=RECOVERED, partitionEpoch=0) (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,320] TRACE [Controller id=1001 epoch=1] Sending become-leader LeaderAndIsr request LeaderAndIsrPartitionState(topicName='perf_kafka_queue_middle', partitionIndex=0, controllerEpoch=1, leader=1001, leaderEpoch=0, isr=[1001], partitionEpoch=0, replicas=[1001], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) to broker 1001 for partition perf_kafka_queue_middle-0 (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,320] INFO [Controller id=1001 epoch=1] Sending LeaderAndIsr request to broker 1001 with 1 become-leader and 0 become-follower partitions (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,321] INFO [Controller id=1001 epoch=1] Sending UpdateMetadata request to brokers HashSet(1001) for 1 partitions (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,321] TRACE [Controller id=1001 epoch=1] Changed state of replica 1001 for partition perf_kafka_queue_middle-0 from NewReplica to OnlineReplica (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,321] INFO [Controller id=1001 epoch=1] Sending UpdateMetadata request to brokers HashSet() for 0 partitions (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,321] INFO [Broker id=1001] Handling LeaderAndIsr request correlationId 15 from controller 1001 for 1 partitions (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,321] TRACE [Broker id=1001] Received LeaderAndIsr request LeaderAndIsrPartitionState(topicName='perf_kafka_queue_middle', partitionIndex=0, controllerEpoch=1, leader=1001, leaderEpoch=0, isr=[1001], partitionEpoch=0, replicas=[1001], addingReplicas=[], removingReplicas=[], isNew=true, leaderRecoveryState=0) correlation id 15 from controller 1001 epoch 1 (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,321] TRACE [Broker id=1001] Handling LeaderAndIsr request correlationId 15 from controller 1001 epoch 1 starting the become-leader transition for partition perf_kafka_queue_middle-0 (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,321] INFO [ReplicaFetcherManager on broker 1001] Removed fetcher for partitions Set(perf_kafka_queue_middle-0) (kafka.server.ReplicaFetcherManager)
+kafka-1      | [2026-10-10 04:35:51,321] INFO [Broker id=1001] Stopped fetchers as part of LeaderAndIsr request correlationId 15 from controller 1001 epoch 1 as part of the become-leader transition for 1 partitions (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,324] INFO [LogLoader partition=perf_kafka_queue_middle-0, dir=/var/lib/kafka/data] Loading producer state till offset 0 with message format version 2 (kafka.log.UnifiedLog$)
+kafka-1      | [2026-10-10 04:35:51,324] INFO Created log for partition perf_kafka_queue_middle-0 in /var/lib/kafka/data/perf_kafka_queue_middle-0 with properties {} (kafka.log.LogManager)
+kafka-1      | [2026-10-10 04:35:51,325] INFO [Partition perf_kafka_queue_middle-0 broker=1001] No checkpointed highwatermark is found for partition perf_kafka_queue_middle-0 (kafka.cluster.Partition)
+kafka-1      | [2026-10-10 04:35:51,325] INFO [Partition perf_kafka_queue_middle-0 broker=1001] Log loaded for partition perf_kafka_queue_middle-0 with initial high watermark 0 (kafka.cluster.Partition)
+kafka-1      | [2026-10-10 04:35:51,325] INFO [Broker id=1001] Leader perf_kafka_queue_middle-0 with topic id Some(W8Ai-CDCQiOHQOT1cDkLag) starts at leader epoch 0 from offset 0 with partition epoch 0, high watermark 0, ISR [1001], adding replicas [] and removing replicas [] . Previous leader None and previous leader epoch was -1. (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,330] TRACE [Broker id=1001] Completed LeaderAndIsr request correlationId 15 from controller 1001 epoch 1 for the become-leader transition for partition perf_kafka_queue_middle-0 (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,330] INFO [Broker id=1001] Finished LeaderAndIsr request in 9ms correlationId 15 from controller 1001 for 1 partitions (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,331] TRACE [Controller id=1001 epoch=1] Received response LeaderAndIsrResponseData(errorCode=0, partitionErrors=[], topics=[LeaderAndIsrTopicError(topicId=W8Ai-CDCQiOHQOT1cDkLag, partitionErrors=[LeaderAndIsrPartitionError(topicName='', partitionIndex=0, errorCode=0)])]) for request LEADER_AND_ISR with correlation id 15 sent to broker kafka:9092 (id: 1001 rack: null) (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,331] TRACE [Broker id=1001] Cached leader info UpdateMetadataPartitionState(topicName='perf_kafka_queue_middle', partitionIndex=0, controllerEpoch=1, leader=1001, leaderEpoch=0, isr=[1001], zkVersion=0, replicas=[1001], offlineReplicas=[]) for partition perf_kafka_queue_middle-0 in response to UpdateMetadata request sent by controller 1001 epoch 1 with correlation id 16 (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,331] INFO [Broker id=1001] Add 1 partitions and deleted 0 partitions from metadata cache in response to UpdateMetadata request sent by controller 1001 epoch 1 with correlation id 16 (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,332] TRACE [Controller id=1001 epoch=1] Received response UpdateMetadataResponseData(errorCode=0) for request UPDATE_METADATA with correlation id 16 sent to broker kafka:9092 (id: 1001 rack: null) (state.change.logger)
+kafka-1      | [2026-10-10 04:35:51,338] INFO [GroupCoordinator 1001]: Dynamic Member with unknown member id joins group perf_kafka_queue_retry in Empty state. Created a new member id msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-a72b96d0-83de-439b-885d-106fb61092f2 for this member and add to the group. (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:51,338] INFO [GroupCoordinator 1001]: Dynamic Member with unknown member id joins group perf_kafka_queue_middle in Empty state. Created a new member id msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-6452f09e-1a29-4a84-af6a-4a223b63f25c for this member and add to the group. (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:51,339] INFO [GroupCoordinator 1001]: Dynamic Member with unknown member id joins group perf_kafka_queue_high in Empty state. Created a new member id msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-5fafb51f-e352-486b-95c7-6359ac50a0bd for this member and add to the group. (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:51,339] INFO [GroupCoordinator 1001]: Dynamic Member with unknown member id joins group perf_kafka_queue_low in Empty state. Created a new member id msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-4a3dac18-4b32-4b19-bdb6-379133655216 for this member and add to the group. (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:51,339] INFO [GroupCoordinator 1001]: Preparing to rebalance group perf_kafka_queue_middle in state PreparingRebalance with old generation 0 (__consumer_offsets-14) (reason: Adding new member msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-6452f09e-1a29-4a84-af6a-4a223b63f25c with group instance id None; client reason: not provided) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:51,339] INFO [GroupCoordinator 1001]: Preparing to rebalance group perf_kafka_queue_low in state PreparingRebalance with old generation 0 (__consumer_offsets-35) (reason: Adding new member msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-4a3dac18-4b32-4b19-bdb6-379133655216 with group instance id None; client reason: not provided) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:51,339] INFO [GroupCoordinator 1001]: Preparing to rebalance group perf_kafka_queue_high in state PreparingRebalance with old generation 0 (__consumer_offsets-31) (reason: Adding new member msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-5fafb51f-e352-486b-95c7-6359ac50a0bd with group instance id None; client reason: not provided) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:51,339] INFO [GroupCoordinator 1001]: Preparing to rebalance group perf_kafka_queue_retry in state PreparingRebalance with old generation 0 (__consumer_offsets-25) (reason: Adding new member msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-a72b96d0-83de-439b-885d-106fb61092f2 with group instance id None; client reason: not provided) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:54,340] INFO [GroupCoordinator 1001]: Stabilized group perf_kafka_queue_middle generation 1 (__consumer_offsets-14) with 1 members (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:54,341] INFO [GroupCoordinator 1001]: Stabilized group perf_kafka_queue_low generation 1 (__consumer_offsets-35) with 1 members (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:54,342] INFO [GroupCoordinator 1001]: Stabilized group perf_kafka_queue_high generation 1 (__consumer_offsets-31) with 1 members (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:54,343] INFO [GroupCoordinator 1001]: Stabilized group perf_kafka_queue_retry generation 1 (__consumer_offsets-25) with 1 members (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:54,344] INFO [GroupCoordinator 1001]: Assignment received from leader msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-6452f09e-1a29-4a84-af6a-4a223b63f25c for group perf_kafka_queue_middle for generation 1. The group has 1 members, 0 of which are static. (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:54,345] INFO [GroupCoordinator 1001]: Assignment received from leader msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-4a3dac18-4b32-4b19-bdb6-379133655216 for group perf_kafka_queue_low for generation 1. The group has 1 members, 0 of which are static. (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:54,345] INFO [GroupCoordinator 1001]: Assignment received from leader msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-5fafb51f-e352-486b-95c7-6359ac50a0bd for group perf_kafka_queue_high for generation 1. The group has 1 members, 0 of which are static. (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:35:54,347] INFO [GroupCoordinator 1001]: Assignment received from leader msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-a72b96d0-83de-439b-885d-106fb61092f2 for group perf_kafka_queue_retry for generation 1. The group has 1 members, 0 of which are static. (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:13,332] INFO [GroupCoordinator 1001]: Preparing to rebalance group perf_kafka_queue_low in state PreparingRebalance with old generation 1 (__consumer_offsets-35) (reason: Removing member msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-4a3dac18-4b32-4b19-bdb6-379133655216 on LeaveGroup; client reason: not provided) (kafka.coordinator.group.GroupCoordinator)
+mysql-1      | 2026-10-10 04:17:22+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.46-1.el9 started.
+mysql-1      | 2026-10-10 04:17:22+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+mysql-1      | 2026-10-10 04:17:22+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.46-1.el9 started.
+mysql-1      | 2026-10-10 04:17:23+00:00 [Note] [Entrypoint]: Initializing database files
+mysql-1      | 2026-10-10T04:17:23.136185Z 0 [Warning] [MY-011068] [Server] The syntax '--skip-host-cache' is deprecated and will be removed in a future release. Please use SET GLOBAL host_cache_size=0 instead.
+kafka-1      | [2026-10-10 04:36:13,332] INFO [GroupCoordinator 1001]: Group perf_kafka_queue_low with generation 2 is now empty (__consumer_offsets-35) (kafka.coordinator.group.GroupCoordinator)
+mysql-1      | 2026-10-10T04:17:23.136267Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.46) initializing of server in progress as process 80
+kafka-1      | [2026-10-10 04:36:13,333] INFO [GroupCoordinator 1001]: Member MemberMetadata(memberId=msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-4a3dac18-4b32-4b19-bdb6-379133655216, groupInstanceId=None, clientId=msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go), clientHost=/172.28.0.7, sessionTimeoutMs=30000, rebalanceTimeoutMs=30000, supportedProtocols=List(range, roundrobin)) has left group perf_kafka_queue_low through explicit `LeaveGroup`; client reason: not provided (kafka.coordinator.group.GroupCoordinator)
+mysql-1      | 2026-10-10T04:17:23.143441Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+mysql-1      | 2026-10-10T04:17:23.531142Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+mysql-1      | 2026-10-10T04:17:24.609486Z 6 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.
+mysql-1      | 2026-10-10 04:17:26+00:00 [Note] [Entrypoint]: Database files initialized
+mysql-1      | 2026-10-10 04:17:26+00:00 [Note] [Entrypoint]: Starting temporary server
+mysql-1      | 2026-10-10T04:17:27.241513Z 0 [Warning] [MY-011068] [Server] The syntax '--skip-host-cache' is deprecated and will be removed in a future release. Please use SET GLOBAL host_cache_size=0 instead.
+mysql-1      | 2026-10-10T04:17:27.243674Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.46) starting as process 136
+mysql-1      | 2026-10-10T04:17:27.260222Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+mysql-1      | 2026-10-10T04:17:27.460160Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+mysql-1      | 2026-10-10T04:17:27.707236Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+mysql-1      | 2026-10-10T04:17:27.707297Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+mysql-1      | 2026-10-10T04:17:27.712725Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
+mysql-1      | 2026-10-10T04:17:27.729826Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Socket: /var/run/mysqld/mysqlx.sock
+mysql-1      | 2026-10-10T04:17:27.729971Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.46'  socket: '/var/run/mysqld/mysqld.sock'  port: 0  MySQL Community Server - GPL.
+mysql-1      | 2026-10-10 04:17:27+00:00 [Note] [Entrypoint]: Temporary server started.
+mysql-1      | '/var/lib/mysql/mysql.sock' -> '/var/run/mysqld/mysqld.sock'
+mysql-1      | Warning: Unable to load '/usr/share/zoneinfo/iso3166.tab' as time zone. Skipping it.
+mysql-1      | Warning: Unable to load '/usr/share/zoneinfo/leap-seconds.list' as time zone. Skipping it.
+mysql-1      | Warning: Unable to load '/usr/share/zoneinfo/leapseconds' as time zone. Skipping it.
+mysql-1      | Warning: Unable to load '/usr/share/zoneinfo/tzdata.zi' as time zone. Skipping it.
+mysql-1      | Warning: Unable to load '/usr/share/zoneinfo/zone.tab' as time zone. Skipping it.
+mysql-1      | Warning: Unable to load '/usr/share/zoneinfo/zone1970.tab' as time zone. Skipping it.
+mysql-1      | 2026-10-10 04:17:29+00:00 [Note] [Entrypoint]: Creating database msgmate_perf_test
+mysql-1      | 
+mysql-1      | 2026-10-10 04:17:29+00:00 [Note] [Entrypoint]: /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/schema.sql
+mysql-1      | 
+mysql-1      | 
+mysql-1      | 2026-10-10 04:17:30+00:00 [Note] [Entrypoint]: Stopping temporary server
+mysql-1      | 2026-10-10T04:17:30.207732Z 13 [System] [MY-013172] [Server] Received SHUTDOWN from user root. Shutting down mysqld (Version: 8.0.46).
+mysql-1      | 2026-10-10T04:17:31.460991Z 0 [System] [MY-010910] [Server] /usr/sbin/mysqld: Shutdown complete (mysqld 8.0.46)  MySQL Community Server - GPL.
+mysql-1      | 2026-10-10 04:17:32+00:00 [Note] [Entrypoint]: Temporary server stopped
+mysql-1      | 
+mysql-1      | 2026-10-10 04:17:32+00:00 [Note] [Entrypoint]: MySQL init process done. Ready for start up.
+mysql-1      | 
+kafka-1      | [2026-10-10 04:36:13,976] INFO [GroupCoordinator 1001]: Preparing to rebalance group perf_kafka_queue_middle in state PreparingRebalance with old generation 1 (__consumer_offsets-14) (reason: Removing member msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-6452f09e-1a29-4a84-af6a-4a223b63f25c on LeaveGroup; client reason: not provided) (kafka.coordinator.group.GroupCoordinator)
+mysql-1      | 2026-10-10T04:17:32.466921Z 0 [Warning] [MY-011068] [Server] The syntax '--skip-host-cache' is deprecated and will be removed in a future release. Please use SET GLOBAL host_cache_size=0 instead.
+mysql-1      | 2026-10-10T04:17:32.468697Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.46) starting as process 1
+mysql-1      | 2026-10-10T04:17:32.474103Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+mysql-1      | 2026-10-10T04:17:32.633471Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+kafka-1      | [2026-10-10 04:36:13,976] INFO [GroupCoordinator 1001]: Group perf_kafka_queue_middle with generation 2 is now empty (__consumer_offsets-14) (kafka.coordinator.group.GroupCoordinator)
+mysql-1      | 2026-10-10T04:17:32.827692Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+mysql-1      | 2026-10-10T04:17:32.827747Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+mysql-1      | 2026-10-10T04:17:32.842166Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
+mysql-1      | 2026-10-10T04:17:32.857542Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+mysql-1      | 2026-10-10T04:17:32.857603Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.46'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
+kafka-1      | [2026-10-10 04:36:13,977] INFO [GroupCoordinator 1001]: Member MemberMetadata(memberId=msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-6452f09e-1a29-4a84-af6a-4a223b63f25c, groupInstanceId=None, clientId=msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go), clientHost=/172.28.0.7, sessionTimeoutMs=30000, rebalanceTimeoutMs=30000, supportedProtocols=List(range, roundrobin)) has left group perf_kafka_queue_middle through explicit `LeaveGroup`; client reason: not provided (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:14,631] INFO [GroupCoordinator 1001]: Preparing to rebalance group perf_kafka_queue_high in state PreparingRebalance with old generation 1 (__consumer_offsets-31) (reason: Removing member msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-5fafb51f-e352-486b-95c7-6359ac50a0bd on LeaveGroup; client reason: not provided) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:14,631] INFO [GroupCoordinator 1001]: Group perf_kafka_queue_high with generation 2 is now empty (__consumer_offsets-31) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:14,631] INFO [GroupCoordinator 1001]: Member MemberMetadata(memberId=msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-5fafb51f-e352-486b-95c7-6359ac50a0bd, groupInstanceId=None, clientId=msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go), clientHost=/172.28.0.7, sessionTimeoutMs=30000, rebalanceTimeoutMs=30000, supportedProtocols=List(range, roundrobin)) has left group perf_kafka_queue_high through explicit `LeaveGroup`; client reason: not provided (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:15,360] INFO [GroupCoordinator 1001]: Preparing to rebalance group perf_kafka_queue_retry in state PreparingRebalance with old generation 1 (__consumer_offsets-25) (reason: Removing member msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-a72b96d0-83de-439b-885d-106fb61092f2 on LeaveGroup; client reason: not provided) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:15,361] INFO [GroupCoordinator 1001]: Group perf_kafka_queue_retry with generation 2 is now empty (__consumer_offsets-25) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:15,361] INFO [GroupCoordinator 1001]: Member MemberMetadata(memberId=msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go)-a72b96d0-83de-439b-885d-106fb61092f2, groupInstanceId=None, clientId=msgmate-perf@8a11564e90fd (github.com/segmentio/kafka-go), clientHost=/172.28.0.7, sessionTimeoutMs=30000, rebalanceTimeoutMs=30000, supportedProtocols=List(range, roundrobin)) has left group perf_kafka_queue_retry through explicit `LeaveGroup`; client reason: not provided (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:16,635] INFO [GroupCoordinator 1001]: Member msgmate-perf@50d9035eaec0 (github.com/segmentio/kafka-go)-761e04e5-23e5-4a42-bb45-8557bd288764 in group perf_kafka_ingress_retry has failed, removing it from the group (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:16,635] INFO [GroupCoordinator 1001]: Preparing to rebalance group perf_kafka_ingress_retry in state PreparingRebalance with old generation 2 (__consumer_offsets-9) (reason: removing member msgmate-perf@50d9035eaec0 (github.com/segmentio/kafka-go)-761e04e5-23e5-4a42-bb45-8557bd288764 on heartbeat expiration) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:16,635] INFO [GroupCoordinator 1001]: Group perf_kafka_ingress_retry with generation 3 is now empty (__consumer_offsets-9) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:16,636] INFO [GroupCoordinator 1001]: Member msgmate-perf@50d9035eaec0 (github.com/segmentio/kafka-go)-8ff7c18d-e8a9-4efb-9556-159df585af24 in group perf_kafka_ingress_high has failed, removing it from the group (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:16,636] INFO [GroupCoordinator 1001]: Preparing to rebalance group perf_kafka_ingress_high in state PreparingRebalance with old generation 2 (__consumer_offsets-9) (reason: removing member msgmate-perf@50d9035eaec0 (github.com/segmentio/kafka-go)-8ff7c18d-e8a9-4efb-9556-159df585af24 on heartbeat expiration) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:16,636] INFO [GroupCoordinator 1001]: Group perf_kafka_ingress_high with generation 3 is now empty (__consumer_offsets-9) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:16,636] INFO [GroupCoordinator 1001]: Member msgmate-perf@50d9035eaec0 (github.com/segmentio/kafka-go)-27e138e1-e3c0-4799-bf09-be4db8f4a4a4 in group perf_kafka_ingress_middle has failed, removing it from the group (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:16,636] INFO [GroupCoordinator 1001]: Preparing to rebalance group perf_kafka_ingress_middle in state PreparingRebalance with old generation 2 (__consumer_offsets-18) (reason: removing member msgmate-perf@50d9035eaec0 (github.com/segmentio/kafka-go)-27e138e1-e3c0-4799-bf09-be4db8f4a4a4 on heartbeat expiration) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:16,636] INFO [GroupCoordinator 1001]: Group perf_kafka_ingress_middle with generation 3 is now empty (__consumer_offsets-18) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:16,636] INFO [GroupCoordinator 1001]: Member msgmate-perf@50d9035eaec0 (github.com/segmentio/kafka-go)-905dc16f-003b-46ab-ac8f-579e86eaddf4 in group perf_kafka_ingress_low has failed, removing it from the group (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:16,636] INFO [GroupCoordinator 1001]: Preparing to rebalance group perf_kafka_ingress_low in state PreparingRebalance with old generation 2 (__consumer_offsets-21) (reason: removing member msgmate-perf@50d9035eaec0 (github.com/segmentio/kafka-go)-905dc16f-003b-46ab-ac8f-579e86eaddf4 on heartbeat expiration) (kafka.coordinator.group.GroupCoordinator)
+kafka-1      | [2026-10-10 04:36:16,636] INFO [GroupCoordinator 1001]: Group perf_kafka_ingress_low with generation 3 is now empty (__consumer_offsets-21) (kafka.coordinator.group.GroupCoordinator)

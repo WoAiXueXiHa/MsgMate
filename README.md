@@ -93,6 +93,8 @@ make integration CONFIG=/absolute/path/to/integration-config.toml
 
 集成测试使用真实 MySQL、Redis、Kafka 与可控渠道处理器，检查接口、队列、定时、重试、状态与限流；缺少依赖会失败。真实发送需显式提供接收人运行 `scripts/acceptance.go`，不得用真实渠道执行故障重试测试，也不要删除发送 ledger 后重复提交。
 
+渐进性能测试脚本与运行说明见 [scripts/perf/README.md](scripts/perf/README.md)，原始结果与实验索引见 [reports/performance/README.md](reports/performance/README.md)。测试使用独立 Docker 环境和零延迟模拟渠道，分别记录 HTTP 受理、队列完成和消息记录查询能力。
+
 ## 联系与 Issues
 
 问题、使用讨论和功能建议请通过 [GitHub Issues](https://github.com/WoAiXueXiHa/MsgMate/issues) 联系维护者。提交问题时请提供：

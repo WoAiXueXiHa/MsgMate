@@ -1,0 +1,3 @@
+wrk failed
+PANIC: unprotected error in call to Lua API (attempt to index a nil value)
+

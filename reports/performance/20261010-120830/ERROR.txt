@@ -1,0 +1,3 @@
+Command failed: docker exec 91971b664a0360c018e050ce3444da21b9bea720c52a3ef9a0ff236329e9a709 /perf/msgmate-perf -action stats
+stats HTTP 500
+

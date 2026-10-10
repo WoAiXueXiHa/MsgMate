@@ -1,0 +1,142 @@
+{
+  "scheduled": 3000,
+  "sent": 3000,
+  "accepted": 3000,
+  "business_errors": 0,
+  "transport_errors": 0,
+  "missed": 0,
+  "offered_rps": 100,
+  "duration_seconds": 30,
+  "elapsed_seconds": 29.997371801,
+  "p50_ms": 5.822,
+  "p99_ms": 9.056,
+  "codes": {
+    "0": 3000
+  },
+  "sample_ids": [
+    "4a2037a9-2279-4936-9a0d-a1fcd3aa7474",
+    "b9bb1335-d7a9-41f7-93fe-cb2303128ac9",
+    "e5646ecf-de08-44de-8430-12c3a5cb9e0f",
+    "50de0365-b10a-4674-b100-7d071d206a6b",
+    "257988ac-4a2e-4f07-8088-3231052f8e41",
+    "bbd10e62-c301-4c2f-a1b5-c9ad9793680e",
+    "3a43b8c0-a3ee-47e9-b10d-644afa8c4993",
+    "1bf437f6-abe1-4042-a373-50ea1a8a5782",
+    "d93fe55b-10dc-4047-8e90-12a5fcdf3bae",
+    "d316988c-ff97-4a64-ae7e-75f7060b040a"
+  ],
+  "suite": "queue",
+  "mode": "mysql",
+  "duration": 30,
+  "verify": true,
+  "before": {
+    "consume": true,
+    "counts": {
+      "Total": 14550,
+      "Pending": 0,
+      "Completed": 14550,
+      "Failed": 0,
+      "Retries": 0
+    },
+    "db_pool": {
+      "MaxOpenConnections": 50,
+      "OpenConnections": 2,
+      "InUse": 0,
+      "Idle": 2,
+      "WaitCount": 0,
+      "WaitDuration": 0,
+      "MaxIdleClosed": 0,
+      "MaxIdleTimeClosed": 0,
+      "MaxLifetimeClosed": 35
+    },
+    "goroutines": 17,
+    "heap_bytes": 6544344,
+    "mode_mysql": true,
+    "mysql_time_wait": 15,
+    "sink_calls": 14550,
+    "sink_delay_ms": 0,
+    "stats_error": "",
+    "time": "2026-10-10T04:29:32.000108686Z"
+  },
+  "at_stop": {
+    "consume": true,
+    "counts": {
+      "Total": 17550,
+      "Pending": 148,
+      "Completed": 17402,
+      "Failed": 0,
+      "Retries": 0
+    },
+    "db_pool": {
+      "MaxOpenConnections": 50,
+      "OpenConnections": 2,
+      "InUse": 1,
+      "Idle": 1,
+      "WaitCount": 0,
+      "WaitDuration": 0,
+      "MaxIdleClosed": 0,
+      "MaxIdleTimeClosed": 0,
+      "MaxLifetimeClosed": 39
+    },
+    "goroutines": 18,
+    "heap_bytes": 5573256,
+    "mode_mysql": true,
+    "mysql_time_wait": 9,
+    "sink_calls": 17403,
+    "sink_delay_ms": 0,
+    "stats_error": "",
+    "time": "2026-10-10T04:30:03.458686652Z"
+  },
+  "after": {
+    "consume": true,
+    "counts": {
+      "Total": 17550,
+      "Pending": 0,
+      "Completed": 17550,
+      "Failed": 0,
+      "Retries": 0
+    },
+    "db_pool": {
+      "MaxOpenConnections": 50,
+      "OpenConnections": 1,
+      "InUse": 0,
+      "Idle": 1,
+      "WaitCount": 0,
+      "WaitDuration": 0,
+      "MaxIdleClosed": 0,
+      "MaxIdleTimeClosed": 0,
+      "MaxLifetimeClosed": 40
+    },
+    "goroutines": 16,
+    "heap_bytes": 4064720,
+    "mode_mysql": true,
+    "mysql_time_wait": 10,
+    "sink_calls": 17550,
+    "sink_delay_ms": 0,
+    "stats_error": "",
+    "time": "2026-10-10T04:30:09.084022393Z"
+  },
+  "backlog_slope_rps": 2.643609737006764,
+  "tail_completion_rps": 92.71977565404212,
+  "drain_seconds": 5.624462335000317,
+  "completed": 3000,
+  "failed": 0,
+  "persisted": 3000,
+  "resources": "{\"BlockIO\":\"74.2MB / 680kB\",\"CPUPerc\":\"0.73%\",\"Container\":\"e8cb2bdb5f7c4363e682a1ef2e4ae38b5e23d4b10e8d66c34e00b942e79e1f7a\",\"ID\":\"e8cb2bdb5f7c\",\"MemPerc\":\"4.45%\",\"MemUsage\":\"346.4MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-121707-kafka-1\",\"NetIO\":\"23.3kB / 28kB\",\"PIDs\":\"98\"}\n{\"BlockIO\":\"1.65MB / 53.2kB\",\"CPUPerc\":\"0.00%\",\"Container\":\"23324a859bfe7cbf8be896c9d0b927a30652996565b6f232d083e85272520623\",\"ID\":\"23324a859bfe\",\"MemPerc\":\"0.05%\",\"MemUsage\":\"4.004MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-121707-load-1\",\"NetIO\":\"767MB / 458MB\",\"PIDs\":\"1\"}\n{\"BlockIO\":\"57.8MB / 5.89GB\",\"CPUPerc\":\"8.20%\",\"Container\":\"2197bc142e42c583761790fefe0d362e8749ac302eb60b111bfecf561a8ff4f7\",\"ID\":\"2197bc142e42\",\"MemPerc\":\"9.90%\",\"MemUsage\":\"770.3MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-121707-mysql-1\",\"NetIO\":\"1.39GB / 4.71GB\",\"PIDs\":\"47\"}\n{\"BlockIO\":\"23.2MB / 24.6kB\",\"CPUPerc\":\"0.15%\",\"Container\":\"2aa6ff66ca28be7d8558d0d070ec88e9c263f274a02a3ad0def6f5506666c0b7\",\"ID\":\"2aa6ff66ca28\",\"MemPerc\":\"0.24%\",\"MemUsage\":\"18.98MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-121707-redis-1\",\"NetIO\":\"297MB / 302MB\",\"PIDs\":\"5\"}\n{\"BlockIO\":\"0B / 12.2MB\",\"CPUPerc\":\"1.34%\",\"Container\":\"62f4faf3fda087ecc90a5aab2d6c52057103271fbf2879d35b9bc211f088200b\",\"ID\":\"62f4faf3fda0\",\"MemPerc\":\"0.25%\",\"MemUsage\":\"19.14MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-121707-runtime-1\",\"NetIO\":\"135MB / 91.3MB\",\"PIDs\":\"18\"}\n{\"BlockIO\":\"72.6MB / 659kB\",\"CPUPerc\":\"0.23%\",\"Container\":\"ef28672e9e7741765a8a2a74107b800c7415094e376bb4c1ad2720b83709d3e1\",\"ID\":\"ef28672e9e77\",\"MemPerc\":\"1.58%\",\"MemUsage\":\"122.8MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-121707-zookeeper-1\",\"NetIO\":\"30.9kB / 20.4kB\",\"PIDs\":\"132\"}\n",
+  "command": [
+    "docker",
+    "exec",
+    "23324a859bfe7cbf8be896c9d0b927a30652996565b6f232d083e85272520623",
+    "/perf/msgmate-perf",
+    "-action",
+    "load",
+    "-rps",
+    "100",
+    "-duration",
+    "30s",
+    "-workers",
+    "2048"
+  ],
+  "passed": false,
+  "artifact": "028-queue-mysql-r100"
+}

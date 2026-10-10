@@ -1,0 +1,142 @@
+{
+  "scheduled": 8400,
+  "sent": 8400,
+  "accepted": 8400,
+  "business_errors": 0,
+  "transport_errors": 0,
+  "missed": 0,
+  "offered_rps": 140,
+  "duration_seconds": 60,
+  "elapsed_seconds": 60.451014391,
+  "p50_ms": 515.208,
+  "p99_ms": 1007.473,
+  "codes": {
+    "0": 8400
+  },
+  "sample_ids": [
+    "3d6508df-1fed-401f-b170-221b7ec36fdf",
+    "859ef2ca-6903-4bef-8a47-afba7f135e4b",
+    "c92d65cd-171e-4593-973c-671fece58faf",
+    "5e5d3dbc-ea5c-4f9f-92ec-eac10de416b7",
+    "d504acc7-09a9-493d-bacc-d1d906e52c14",
+    "831bcc9f-2f2d-4ee4-9dc9-0f9288626530",
+    "c9a0adb0-989e-42b0-954b-a8146cfe97cf",
+    "d28c4c37-b29d-46a0-bbc8-5d33a2d0b233",
+    "4fb9436a-9740-4d4a-bb01-3b113e5c8f3a",
+    "8d289b8e-9523-4a48-b01f-1b3928724683"
+  ],
+  "suite": "queue",
+  "mode": "kafka",
+  "duration": 60,
+  "verify": false,
+  "before": {
+    "consume": true,
+    "counts": {
+      "Total": 14400,
+      "Pending": 0,
+      "Completed": 14400,
+      "Failed": 0,
+      "Retries": 0
+    },
+    "db_pool": {
+      "MaxOpenConnections": 50,
+      "OpenConnections": 4,
+      "InUse": 0,
+      "Idle": 4,
+      "WaitCount": 0,
+      "WaitDuration": 0,
+      "MaxIdleClosed": 2,
+      "MaxIdleTimeClosed": 0,
+      "MaxLifetimeClosed": 22
+    },
+    "goroutines": 45,
+    "heap_bytes": 9717832,
+    "mode_mysql": false,
+    "mysql_time_wait": 10,
+    "sink_calls": 14400,
+    "sink_delay_ms": 0,
+    "stats_error": "",
+    "time": "2026-10-10T04:41:47.925873578Z"
+  },
+  "at_stop": {
+    "consume": true,
+    "counts": {
+      "Total": 22800,
+      "Pending": 0,
+      "Completed": 22800,
+      "Failed": 0,
+      "Retries": 0
+    },
+    "db_pool": {
+      "MaxOpenConnections": 50,
+      "OpenConnections": 7,
+      "InUse": 0,
+      "Idle": 7,
+      "WaitCount": 0,
+      "WaitDuration": 0,
+      "MaxIdleClosed": 2,
+      "MaxIdleTimeClosed": 0,
+      "MaxLifetimeClosed": 32
+    },
+    "goroutines": 48,
+    "heap_bytes": 11564160,
+    "mode_mysql": false,
+    "mysql_time_wait": 9,
+    "sink_calls": 22800,
+    "sink_delay_ms": 0,
+    "stats_error": "",
+    "time": "2026-10-10T04:42:50.286807962Z"
+  },
+  "after": {
+    "consume": true,
+    "counts": {
+      "Total": 22800,
+      "Pending": 0,
+      "Completed": 22800,
+      "Failed": 0,
+      "Retries": 0
+    },
+    "db_pool": {
+      "MaxOpenConnections": 50,
+      "OpenConnections": 5,
+      "InUse": 0,
+      "Idle": 5,
+      "WaitCount": 0,
+      "WaitDuration": 0,
+      "MaxIdleClosed": 2,
+      "MaxIdleTimeClosed": 0,
+      "MaxLifetimeClosed": 34
+    },
+    "goroutines": 46,
+    "heap_bytes": 11611360,
+    "mode_mysql": false,
+    "mysql_time_wait": 11,
+    "sink_calls": 22800,
+    "sink_delay_ms": 0,
+    "stats_error": "",
+    "time": "2026-10-10T04:42:50.606710358Z"
+  },
+  "backlog_slope_rps": -1.4080720147239563,
+  "tail_completion_rps": 141.3848720425388,
+  "drain_seconds": 0.3199787739995372,
+  "completed": 8400,
+  "failed": 0,
+  "persisted": 8400,
+  "resources": "{\"BlockIO\":\"79.2MB / 8.56MB\",\"CPUPerc\":\"2.45%\",\"Container\":\"6cd3497c4bab47c3ce3bcc26ce75f3bf5673e175c171a13e02d0cc0472b98713\",\"ID\":\"6cd3497c4bab\",\"MemPerc\":\"5.47%\",\"MemUsage\":\"426MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-123904-kafka-1\",\"NetIO\":\"12.7MB / 8.12MB\",\"PIDs\":\"100\"}\n{\"BlockIO\":\"1.65MB / 41kB\",\"CPUPerc\":\"0.00%\",\"Container\":\"01229cbed27ac7b20563becd655c8dbd4807371b8f6b6cebf0c47bb2b6ec7058\",\"ID\":\"01229cbed27a\",\"MemPerc\":\"0.06%\",\"MemUsage\":\"4.688MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-123904-load-1\",\"NetIO\":\"7.52MB / 9.83MB\",\"PIDs\":\"1\"}\n{\"BlockIO\":\"21.8MB / 988MB\",\"CPUPerc\":\"5.91%\",\"Container\":\"d535d8437c4d53fc0e6ae40ff5ce010f5c6b28081f251ef6910c5b62dd579135\",\"ID\":\"d535d8437c4d\",\"MemPerc\":\"5.99%\",\"MemUsage\":\"465.9MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-123904-mysql-1\",\"NetIO\":\"37.3MB / 83.6MB\",\"PIDs\":\"49\"}\n{\"BlockIO\":\"918kB / 8.19kB\",\"CPUPerc\":\"0.13%\",\"Container\":\"35deee2f089f7382e6137ad99a0bfb92a3d5d94cb62af312fcd706c6aa9394d2\",\"ID\":\"35deee2f089f\",\"MemPerc\":\"0.07%\",\"MemUsage\":\"5.777MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-123904-redis-1\",\"NetIO\":\"20.2MB / 22.3MB\",\"PIDs\":\"5\"}\n{\"BlockIO\":\"8.19kB / 15.1MB\",\"CPUPerc\":\"0.38%\",\"Container\":\"3bd7df8d4e216e5c0a73ee4e44111a56b4b0b4ba8e9c53d117f70313d8e497c4\",\"ID\":\"3bd7df8d4e21\",\"MemPerc\":\"0.38%\",\"MemUsage\":\"29.59MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-123904-runtime-1\",\"NetIO\":\"124MB / 77.6MB\",\"PIDs\":\"39\"}\n{\"BlockIO\":\"63.8MB / 573kB\",\"CPUPerc\":\"0.19%\",\"Container\":\"d5d3eb35711314e831b34eca3e3d3da5039f1d7138fd868e9777220ff90e628d\",\"ID\":\"d5d3eb357113\",\"MemPerc\":\"1.60%\",\"MemUsage\":\"124.5MiB / 7.601GiB\",\"Name\":\"msgmate-perf-20261010-123904-zookeeper-1\",\"NetIO\":\"60.2kB / 51.7kB\",\"PIDs\":\"132\"}\n",
+  "command": [
+    "docker",
+    "exec",
+    "01229cbed27ac7b20563becd655c8dbd4807371b8f6b6cebf0c47bb2b6ec7058",
+    "/perf/msgmate-perf",
+    "-action",
+    "load",
+    "-rps",
+    "140",
+    "-duration",
+    "60s",
+    "-workers",
+    "2048"
+  ],
+  "passed": true,
+  "artifact": "004-queue-kafka-r140"
+}
