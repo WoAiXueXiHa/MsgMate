@@ -68,3 +68,11 @@ Kafka 发布固定为同步、`acks=-1`；旧 `ack`、`async` 配置字段保留
 QQ SMTP 主机 `smtp.qq.com` 与端口 `465` 当前固定在源码中，配置只提供邮箱账号和授权码。飞书凭据通过环境变量 `FEISHU_APP_ID` 和 `FEISHU_APP_SECRET` 读取，使用飞书发送前需在本地设置；短信适配保留，但不作为本项目接入主线。
 
 程序不再打印整份配置，私有配置不提交，授权码不要写入文档或聊天。集成验收配置必须使用名称以 `_test` 结尾的隔离数据库。真实 SMTP 结果与未验证边界见 `docs/REPAIR.md`。
+
+### Kafka 批次等待
+
+`[Kafka]` 可设置 `batch_timeout_ms = 20`，单位毫秒，用于缩短批次未满时的等待。未设置或为0时保留原默认约1000毫秒；负数拒绝启动。该参数不改变同步返回、ack=-1、分区策略、重试或发送超时。
+
+### MySQL连接池
+
+当前源码统一设置最大连接50、最大空闲连接50、连接寿命30秒。连接寿命由依赖的WithMaxIdleTime设置，实际调用SetConnMaxLifetime。空闲连接10→50的查询复测及完整wrk输出见[RESULTS.md](../reports/performance/RESULTS.md)。

@@ -62,8 +62,9 @@ type redisConfig struct {
 }
 
 type kafkaConfig struct {
-	Brokers []string               `toml:"brokers"`
-	Topics  map[string]TopicConfig `toml:"topics"`
+	BatchTimeoutMS int                    `toml:"batch_timeout_ms"` // 0 keeps kafka-go default (1s).
+	Brokers        []string               `toml:"brokers"`
+	Topics         map[string]TopicConfig `toml:"topics"`
 }
 
 type TopicConfig struct {

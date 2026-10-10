@@ -126,6 +126,9 @@ func (p *Data) GetRetryMQConsumer() mq.Consumer {
 //	@return *Data
 //	@return error
 func NewData(cf *conf.TomlConfig) (result *Data, initErr error) {
+	if cf.Kafka.BatchTimeoutMS < 0 {
+		return nil, fmt.Errorf("Kafka batch_timeout_ms must be nonnegative")
+	}
 	defer func() {
 		if r := recover(); r != nil {
 			result = nil
@@ -138,7 +141,7 @@ func NewData(cf *conf.TomlConfig) (result *Data, initErr error) {
 		gormcli.WithUser(cf.MySQL.User),
 		gormcli.WithPassword(cf.MySQL.Pwd),
 		gormcli.WithDataBase(cf.MySQL.Dbname),
-		gormcli.WithMaxIdleConn(10),
+		gormcli.WithMaxIdleConn(50),
 		gormcli.WithMaxOpenConn(50),
 		gormcli.WithMaxIdleTime(30),
 		gormcli.WithSlowThresholdMillisecond(0),
@@ -173,12 +176,17 @@ func generateProducer(cf *conf.TomlConfig) map[PriorityEnum]mq.Producer {
 	producers := make(map[PriorityEnum]mq.Producer)
 
 	for _, topicConfig := range cf.Kafka.Topics {
-		producer := mq.NewKafkaProducer(
-			mq.WithBrokers(cf.Kafka.Brokers),
-			mq.WithTopic(topicConfig.Name),
-			mq.WithAck(-1),
-			mq.WithGroupID(topicConfig.GroupID),
-			mq.WithPartition(topicConfig.Partition))
+		var producer mq.Producer
+		if cf.Kafka.BatchTimeoutMS > 0 {
+			producer = newTimedKafkaProducer(cf.Kafka.Brokers, topicConfig.Name, time.Duration(cf.Kafka.BatchTimeoutMS)*time.Millisecond)
+		} else {
+			producer = mq.NewKafkaProducer(
+				mq.WithBrokers(cf.Kafka.Brokers),
+				mq.WithTopic(topicConfig.Name),
+				mq.WithAck(-1),
+				mq.WithGroupID(topicConfig.GroupID),
+				mq.WithPartition(topicConfig.Partition))
+		}
 
 		if producer == nil {
 			panic(fmt.Sprintf("nil producer for %s", topicConfig.Name))
