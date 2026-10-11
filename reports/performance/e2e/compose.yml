@@ -1,0 +1,27 @@
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: e2e-only
+      MYSQL_DATABASE: msgmate_e2e_test
+    volumes:
+      - ../../../sql/msgcenter.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+  redis:
+    image: redis:7.2.14-alpine
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  runtime:
+    image: golang:1.26-alpine
+    working_dir: /work
+    volumes:
+      - /tmp/msgmate-e2e:/work
+    command: [sleep, infinity]
