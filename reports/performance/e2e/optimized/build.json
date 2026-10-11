@@ -1,0 +1,22 @@
+{
+  "go_version": "go version go1.26.0 linux/amd64",
+  "baseline_commit": "413785719371746d9367aafe851e35cba9b772d6",
+  "bench_sha256": "2728cbb7eb9e01aa15a88210499072b5e21dd007f48e849162ccb7d54fac745a",
+  "production_changes_uncommitted": true,
+  "channel_delay_ms": 10,
+  "consumer_settings": {
+    "workers": 4,
+    "retry_workers": 1,
+    "high_batch": 60,
+    "middle_batch": 30,
+    "low_batch": 30,
+    "retry_batch": 10,
+    "idle_min_ms": 50,
+    "idle_max_ms": 500,
+    "error_backoff_ms": 500,
+    "retry_interval_ms": 1000,
+    "kafka_batch_wait_ms": 5,
+    "channel_concurrency": 4,
+    "channel_rate_per_second": 0
+  }
+}

@@ -1,0 +1,3 @@
+=== RUN   TestConcurrentMySQLClaimAndTerminalReplay
+--- PASS: TestConcurrentMySQLClaimAndTerminalReplay (0.92s)
+PASS

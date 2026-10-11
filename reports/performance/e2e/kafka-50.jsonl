@@ -1,0 +1,9 @@
+{"event":"start","rate":50,"seconds":30,"stats":{"calls":0,"failed":0,"pending":0,"success":0,"total":0}}
+{"elapsed":5.002508078,"event":"sample","stats":{"calls":139,"failed":0,"pending":111,"success":138,"total":249}}
+{"elapsed":10.002006934,"event":"sample","stats":{"calls":430,"failed":0,"pending":69,"success":430,"total":499}}
+{"elapsed":15.002557875,"event":"sample","stats":{"calls":729,"failed":0,"pending":21,"success":728,"total":749}}
+{"elapsed":20.002086092,"event":"sample","stats":{"calls":998,"failed":0,"pending":2,"success":997,"total":999}}
+{"elapsed":25.002353147,"event":"sample","stats":{"calls":1248,"failed":0,"pending":2,"success":1247,"total":1249}}
+{"elapsed":30.027802825,"event":"load_end","stats":{"calls":1499,"failed":0,"pending":1,"success":1499,"total":1500}}
+{"elapsed":35.032672179,"event":"drain","stats":{"calls":1500,"failed":0,"pending":0,"success":1500,"total":1500}}
+{"accepted":1500,"business_errors":0,"drain_seconds":5.003594734,"event":"final","issued":1500,"load_elapsed":30.027802825,"response_p99_ms":32.138180000000006,"stats":{"calls":1500,"failed":0,"pending":0,"success":1500,"total":1500},"total_elapsed":35.033003729,"transport_errors":0}
