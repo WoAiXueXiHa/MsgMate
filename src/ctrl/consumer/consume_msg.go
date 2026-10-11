@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"math/rand"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/BitofferHub/pkg/middlewares/lock"
 	"github.com/BitofferHub/pkg/middlewares/log"
 	"github.com/BitofferHub/pkg/middlewares/mq"
+	"github.com/WoAiXueXiHa/MsgMate/src/concurrency"
 	"github.com/WoAiXueXiHa/MsgMate/src/config"
 	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/ctrlmodel"
 	"github.com/WoAiXueXiHa/MsgMate/src/ctrl/tools"
@@ -23,14 +24,22 @@ var consumePriority = []data.PriorityEnum{data.PRIORITY_HIGH, data.PRIORITY_MIDD
 // MsgConsume 按优先级启动独立消费循环，共用取消信号并等待退出。
 // 各队列独立推进，启动顺序不代表跨队列严格优先顺序。
 type MsgConsume struct {
-	ctx    context.Context
-	cancel context.CancelFunc
-	wg     sync.WaitGroup
+	ctx          context.Context
+	cancel       context.CancelFunc
+	wg           sync.WaitGroup
+	settings     config.ConsumerConfig
+	gateMu       sync.Mutex
+	gates        map[int]*sendGate
+	messageLocks [256]chan struct{}
 }
 
 func NewMsgConsume() *MsgConsume {
 	ctx, cancel := context.WithCancel(context.Background())
-	return &MsgConsume{ctx: ctx, cancel: cancel}
+	s := &MsgConsume{ctx: ctx, cancel: cancel, settings: config.Conf.Consumer.WithDefaults(), gates: make(map[int]*sendGate)}
+	for i := range s.messageLocks {
+		s.messageLocks[i] = make(chan struct{}, 1)
+	}
+	return s
 }
 
 func (s *MsgConsume) Consume() {
@@ -70,16 +79,29 @@ func (s *MsgConsume) consumeFromMySQLWithLock(priority data.PriorityEnum) {
 		}
 	}
 	defer l.Unlock(context.Background())
+	idle := time.Duration(s.settings.IdleMinMS) * time.Millisecond
 	for s.ctx.Err() == nil {
-		s.consumeMySQLMsg(priority)
-		delay := RandNum(500)
-		if priority == data.PRIORITY_RETRY {
-			delay = 1000 + rand.Int63n(1001)
+		count, err := s.consumeMySQLMsg(priority)
+		delay := time.Duration(0)
+		switch {
+		case err != nil:
+			delay = time.Duration(s.settings.ErrorBackoffMS) * time.Millisecond
+		case priority == data.PRIORITY_RETRY:
+			delay = time.Duration(s.settings.RetryIntervalMS) * time.Millisecond
+		case count == 0:
+			delay = idle
+			idle *= 2
+			if max := time.Duration(s.settings.IdleMaxMS) * time.Millisecond; idle > max {
+				idle = max
+			}
+		default:
+			idle = time.Duration(s.settings.IdleMinMS) * time.Millisecond
 		}
-		if !wait(s.ctx, time.Duration(delay)*time.Millisecond) {
+		if delay > 0 && !wait(s.ctx, delay) {
 			return
 		}
 	}
+
 }
 
 func (s *MsgConsume) consumeFromMQ(c mq.Consumer, priority data.PriorityEnum) {
@@ -90,6 +112,11 @@ func (s *MsgConsume) consumeFromMQ(c mq.Consumer, priority data.PriorityEnum) {
 			log.Errorf("invalid Kafka payload; discarded")
 			return nil
 		}
+		unlock, err := s.lockMessage(s.ctx, req.MsgID)
+		if err != nil {
+			return err
+		}
+		defer unlock()
 		record, err := data.MsgRecordNsp.Find(data.GetData().GetDB(), req.MsgID)
 		if err != nil {
 			return err
@@ -100,12 +127,15 @@ func (s *MsgConsume) consumeFromMQ(c mq.Consumer, priority data.PriorityEnum) {
 		if record.RetryCount >= config.Conf.Common.MaxRetryCount {
 			return data.MsgRecordNsp.UpdateStatus(data.GetData().GetDB(), req.MsgID, int(data.MSG_STATUS_FAILED))
 		}
-		if err := dealOneMsg(s.ctx, &req); err != nil {
+		if err := s.dealOneMsg(s.ctx, &req); err != nil {
 			var sent *sentError
 			if errors.As(err, &sent) {
 				return err
 			}
-			return s.handleMqRetryAfterFailure(s.ctx, &req, body, data.GetPriorityStr(priority))
+			if s.ctx.Err() != nil {
+				return s.ctx.Err()
+			}
+			return s.handleMqRetryAfterFailure(s.ctx, &req)
 		}
 		return nil
 	})
@@ -117,7 +147,7 @@ type sentError struct{ err error }
 
 func (e *sentError) Error() string { return e.err.Error() }
 func (e *sentError) Unwrap() error { return e.err }
-func (s *MsgConsume) handleMqRetryAfterFailure(ctx context.Context, req *ctrlmodel.SendMsgReq, body []byte, p string) error {
+func (s *MsgConsume) handleMqRetryAfterFailure(ctx context.Context, req *ctrlmodel.SendMsgReq) error {
 	db := data.GetData().GetDB()
 	count, err := data.MsgRecordNsp.IncrementRetryCount(db, req.MsgID)
 	if err != nil {
@@ -140,7 +170,7 @@ func (s *MsgConsume) handleMqRetryAfterFailure(ctx context.Context, req *ctrlmod
 }
 
 // dealOneMsg 统一执行模板校验、正文渲染、渠道调用和成功状态持久化。
-func dealOneMsg(ctx context.Context, req *ctrlmodel.SendMsgReq) error {
+func (s *MsgConsume) dealOneMsg(ctx context.Context, req *ctrlmodel.SendMsgReq) error {
 	dt := data.GetData()
 	tp, err := dt.GetMsgTemplate(ctx, req.TemplateID)
 	if err != nil {
@@ -169,7 +199,13 @@ func dealOneMsg(ctx context.Context, req *ctrlmodel.SendMsgReq) error {
 	base.Priority = req.Priority
 	base.TemplateID = req.TemplateID
 	base.TemplateData = req.TemplateData
-	if err := proc.SendMsg(); err != nil {
+	release, err := s.gate(tp.Channel).acquire(ctx)
+	if err != nil {
+		return err
+	}
+	sendErr := proc.SendMsg()
+	release()
+	if err := sendErr; err != nil {
 		log.Errorf("message %s channel failed: %v", req.MsgID, err)
 		return err
 	}
@@ -224,68 +260,85 @@ func dealRetryMysqlQueue(db *gorm.DB, req *ctrlmodel.SendMsgReq) error {
 	})
 }
 
-func (s *MsgConsume) consumeMySQLMsg(priority data.PriorityEnum) {
+func (s *MsgConsume) consumeMySQLMsg(priority data.PriorityEnum) (int, error) {
 	dt := data.GetData()
 	p := data.GetPriorityStr(priority)
-	// 通过批量大小分配处理机会；各优先级循环并行，不是统一调度器。
-	n := 60
-	if priority == data.PRIORITY_MIDDLE {
-		n = 30
-	} else if priority == data.PRIORITY_LOW {
-		n = 10
+	n, workers := s.settings.HighBatch, s.settings.Workers
+	switch priority {
+	case data.PRIORITY_MIDDLE:
+		n = s.settings.MiddleBatch
+	case data.PRIORITY_LOW:
+		n = s.settings.LowBatch
+	case data.PRIORITY_RETRY:
+		n = s.settings.RetryBatch
+		workers = s.settings.RetryWorkers
 	}
-	rows, err := data.MsgQueueNsp.GetMsgList(dt.GetDB(), p, int(data.TASK_STATUS_PENDING), n)
+	rows, err := data.MsgQueueNsp.GetMsgList(dt.GetDB().WithContext(s.ctx), p, int(data.TASK_STATUS_PENDING), n)
 	if err != nil {
 		log.Errorf("read queue: %v", err)
-		return
+		return 0, err
 	}
-	for _, row := range rows {
-		if s.ctx.Err() != nil {
-			return
-		}
-		// 逐条按 pending 条件领取，领取失败跳过，避免整批任务都进入处理中。
-		claim := dt.GetDB().Table("t_msg_queue_"+p).Where("msg_id = ? AND status = ?", row.MsgId, data.TASK_STATUS_PENDING).Update("status", data.TASK_STATUS_PROCESSING)
-		if claim.Error != nil || claim.RowsAffected != 1 {
-			continue
-		}
-		req := &ctrlmodel.SendMsgReq{MsgID: row.MsgId, Priority: row.Priority, To: row.To, Subject: row.Subject, TemplateID: row.TemplateID}
-		record, err := data.MsgRecordNsp.Find(dt.GetDB(), row.MsgId)
+	var claimed int64
+	err = concurrency.Run(s.ctx, len(rows), workers, func(i int) error {
+		row := rows[i]
+		unlock, err := s.lockMessage(s.ctx, row.MsgId)
 		if err != nil {
-			_ = data.MsgQueueNsp.SetStatus(dt.GetDB(), p, row.MsgId, int(data.TASK_STATUS_PENDING))
-			continue
+			return err
 		}
-		if record.Status == int(data.MSG_STATUS_SUCC) {
-			_ = data.FinishQueues(dt.GetDB(), row.MsgId, int(data.TASK_STATUS_SUCC))
-			continue
+		defer unlock()
+		// Only claim when a worker starts; buffered/unstarted rows remain pending.
+		db := dt.GetDB()
+		claim := db.WithContext(s.ctx).Table("t_msg_queue_"+p).Where("msg_id = ? AND status = ?", row.MsgId, data.TASK_STATUS_PENDING).Update("status", data.TASK_STATUS_PROCESSING)
+		if claim.Error != nil {
+			return claim.Error
 		}
-		if record.Status == int(data.MSG_STATUS_FAILED) {
-			_ = data.FinishQueues(dt.GetDB(), row.MsgId, int(data.TASK_STATUS_FAILED))
-			continue
+		if claim.RowsAffected != 1 {
+			return nil
 		}
-		// 坏参数只终止当前消息，继续处理本批后续任务。
-		if err := json.Unmarshal([]byte(row.TemplateData), &req.TemplateData); err != nil {
-			_ = dt.GetDB().Transaction(func(tx *gorm.DB) error {
-				if err := data.MsgRecordNsp.UpdateStatus(tx, row.MsgId, int(data.MSG_STATUS_FAILED)); err != nil {
-					return err
-				}
-				return data.FinishQueues(tx, row.MsgId, int(data.TASK_STATUS_FAILED))
-			})
-			continue
-		}
-		if err := dealOneMsg(s.ctx, req); err != nil {
-			var sent *sentError
-			if errors.As(err, &sent) {
-				return
-			}
-			if err := dealRetryMysqlQueue(dt.GetDB(), req); err != nil {
-				log.Errorf("retry transition: %v", err)
-				_ = data.MsgQueueNsp.SetStatus(dt.GetDB(), p, row.MsgId, int(data.TASK_STATUS_PENDING))
+		atomic.AddInt64(&claimed, 1)
+		err = s.processMySQLRow(row, p)
+		if err != nil {
+			// Infrastructure/cancellation errors leave the claimed row retryable.
+			resetErr := data.MsgQueueNsp.SetStatus(db, p, row.MsgId, int(data.TASK_STATUS_PENDING))
+			if resetErr != nil {
+				log.Errorf("reset claimed message %s: %v", row.MsgId, resetErr)
 			}
 		}
-	}
+		return err
+	})
+	return int(claimed), err
 }
 
-func RandNum(n int64) int64 { return rand.Int63n(n) + 1 }
+func (s *MsgConsume) processMySQLRow(row *data.MsgQueue, p string) error {
+	db := data.GetData().GetDB()
+	req := &ctrlmodel.SendMsgReq{MsgID: row.MsgId, Priority: row.Priority, To: row.To, Subject: row.Subject, TemplateID: row.TemplateID}
+	record, err := data.MsgRecordNsp.Find(db, row.MsgId)
+	if err != nil {
+		return err
+	}
+	if record.Status == int(data.MSG_STATUS_SUCC) {
+		return data.FinishQueues(db, row.MsgId, int(data.TASK_STATUS_SUCC))
+	}
+	if record.Status == int(data.MSG_STATUS_FAILED) {
+		return data.FinishQueues(db, row.MsgId, int(data.TASK_STATUS_FAILED))
+	}
+	if err := json.Unmarshal([]byte(row.TemplateData), &req.TemplateData); err != nil {
+		return db.Transaction(func(tx *gorm.DB) error {
+			if err := data.MsgRecordNsp.UpdateStatus(tx, row.MsgId, int(data.MSG_STATUS_FAILED)); err != nil {
+				return err
+			}
+			return data.FinishQueues(tx, row.MsgId, int(data.TASK_STATUS_FAILED))
+		})
+	}
+	if err := s.dealOneMsg(s.ctx, req); err != nil {
+		var sent *sentError
+		if errors.As(err, &sent) || s.ctx.Err() != nil {
+			return err
+		}
+		return dealRetryMysqlQueue(db, req)
+	}
+	return nil
+}
 
 // UnlockAll 取消循环并关闭 Kafka Reader，等待后台协程释放各自资源。
 func (s *MsgConsume) UnlockAll() {

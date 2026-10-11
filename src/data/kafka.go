@@ -3,18 +3,22 @@ package data
 import (
 	"context"
 	"fmt"
+	"github.com/WoAiXueXiHa/MsgMate/src/concurrency"
 	"time"
 
 	conf "github.com/WoAiXueXiHa/MsgMate/src/config"
 	"github.com/segmentio/kafka-go"
 )
 
-// kafkaConsumer 顺序执行拉取、处理、提交 offset，处理失败时不确认消息。
-// 单条消息未处理完成会阻塞当前优先级消费者，以保留失败重试机会。
+// kafkaConsumer 并发处理有上限的小批次，整批完成后才提交 offset。
+// 批内失败或取消时不提交；提交重试不会重新执行已成功的处理器。
 type kafkaConsumer struct {
-	reader *kafka.Reader
-	ctx    context.Context
-	cancel context.CancelFunc
+	reader     kafkaBatchReader
+	workers    int
+	batchWait  time.Duration
+	retryPause time.Duration
+	ctx        context.Context
+	cancel     context.CancelFunc
 }
 
 func newKafkaConsumer(brokers []string, topic, group string) *kafkaConsumer {
@@ -22,7 +26,21 @@ func newKafkaConsumer(brokers []string, topic, group string) *kafkaConsumer {
 	return &kafkaConsumer{reader: kafka.NewReader(kafka.ReaderConfig{Brokers: brokers, Topic: topic, GroupID: group, StartOffset: kafka.FirstOffset, MaxWait: time.Second}), ctx: ctx, cancel: cancel}
 }
 
+type kafkaBatchReader interface {
+	FetchMessage(context.Context) (kafka.Message, error)
+	CommitMessages(context.Context, ...kafka.Message) error
+	Close() error
+}
+
 func (c *kafkaConsumer) ConsumeMessages(handler func([]byte) error) {
+	workers := c.workers
+	if workers < 1 {
+		workers = 1
+	}
+	batchWait := c.batchWait
+	if batchWait <= 0 {
+		batchWait = 5 * time.Millisecond
+	}
 	for c.ctx.Err() == nil {
 		msg, err := c.reader.FetchMessage(c.ctx)
 		if err != nil {
@@ -31,30 +49,53 @@ func (c *kafkaConsumer) ConsumeMessages(handler func([]byte) error) {
 			}
 			continue
 		}
-		if !handleAndCommit(c.ctx, msg.Value, handler, func() error { return c.reader.CommitMessages(c.ctx, msg) }) {
+		batch := []kafka.Message{msg}
+		// At most workers messages can be in flight. A short fill deadline avoids
+		// waiting indefinitely for a full batch at low arrival rates.
+		fill, cancel := context.WithTimeout(c.ctx, batchWait)
+		for len(batch) < workers {
+			next, err := c.reader.FetchMessage(fill)
+			if err != nil {
+				break
+			}
+			batch = append(batch, next)
+		}
+		cancel()
+		if !handleBatchAndCommit(c.ctx, batch, workers, handler, func() error { return c.reader.CommitMessages(c.ctx, batch...) }) {
+			return
+		}
+		if c.retryPause > 0 && !delayContext(c.ctx, c.retryPause) {
 			return
 		}
 	}
 }
 
-// handleAndCommit 分开重试处理和提交：处理成功后，提交失败只重试 offset，
-// 不再次执行渠道调用。进程崩溃后的重新消费仍依赖业务记录判断状态。
-func handleAndCommit(ctx context.Context, body []byte, handler func([]byte) error, commit func() error) bool {
-	for {
-		if ctx.Err() != nil {
-			return false
+// No commit can cross an unfinished message, even if later offsets finish first.
+func handleBatchAndCommit(ctx context.Context, batch []kafka.Message, workers int, handler func([]byte) error, commit func() error) bool {
+	err := concurrency.Run(ctx, len(batch), workers, func(i int) error {
+		if !retryHandler(ctx, batch[i].Value, handler) {
+			return ctx.Err()
 		}
+		return nil
+	})
+	if err != nil {
+		return false
+	}
+	return retryCommit(ctx, commit)
+}
+func retryHandler(ctx context.Context, body []byte, handler func([]byte) error) bool {
+	for ctx.Err() == nil {
 		if err := handler(body); err == nil {
-			break
+			return true
 		}
 		if !pause(ctx) {
 			return false
 		}
 	}
-	for {
-		if ctx.Err() != nil {
-			return false
-		}
+	return false
+}
+func retryCommit(ctx context.Context, commit func() error) bool {
+	for ctx.Err() == nil {
 		if err := commit(); err == nil {
 			return true
 		}
@@ -62,6 +103,23 @@ func handleAndCommit(ctx context.Context, body []byte, handler func([]byte) erro
 			return false
 		}
 	}
+	return false
+}
+func delayContext(ctx context.Context, d time.Duration) bool {
+	timer := time.NewTimer(d)
+	defer timer.Stop()
+	select {
+	case <-ctx.Done():
+		return false
+	case <-timer.C:
+		return true
+	}
+}
+
+// handleAndCommit 分开重试处理和提交：处理成功后，提交失败只重试 offset，
+// 不再次执行渠道调用。进程崩溃后的重新消费仍依赖业务记录判断状态。
+func handleAndCommit(ctx context.Context, body []byte, handler func([]byte) error, commit func() error) bool {
+	return retryHandler(ctx, body, handler) && retryCommit(ctx, commit)
 }
 
 func pause(ctx context.Context) bool {

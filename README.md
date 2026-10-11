@@ -24,7 +24,7 @@ flowchart LR
 
 MySQL 模式将普通消息记录与入队放在同一事务中。Kafka 模式同步发布并等待 `acks=-1`，消费者在处理成功或转入重试后提交 offset；Kafka 与 MySQL 之间没有跨存储事务。
 
-Redis 用于限流、消费锁、定时索引及可选缓存，关闭缓存仍需 Redis。MySQL 普通队列高、中、低批量大小为 60/30/10；Kafka 各优先级独立消费，不保证跨队列严格顺序。
+Redis 用于限流、消费锁、定时索引及可选缓存，关闭缓存仍需 Redis。MySQL 普通队列默认高、中、低批量大小为 60/30/30，有积压时连续拉取，空队列退避；各优先级消费并发受配置限制。Kafka 使用有上限的小批次并发，整批完成后提交 offset；不保证消息完成顺序。每个渠道共享发送并发上限及可选发送限速，详见 [消费配置说明](config/README.md#消费并发与发送保护)。
 
 ## 启动
 
@@ -93,7 +93,7 @@ make integration CONFIG=/absolute/path/to/integration-config.toml
 
 集成测试使用真实 MySQL、Redis、Kafka 与可控渠道处理器，检查接口、队列、定时、重试、状态与限流；缺少依赖会失败。真实发送需显式提供接收人运行 `scripts/acceptance.go`，不得用真实渠道执行故障重试测试，也不要删除发送 ledger 后重复提交。
 
-六组直接 wrk 测试的完整命令、原始输出与结论见 [RESULTS.md](reports/performance/RESULTS.md)，请求体和业务响应校验见 [scripts/wrk.lua](scripts/wrk.lua)。测试使用独立依赖，关闭消费者，只测发送受理与消息记录查询。
+六组直接 wrk 测试的完整命令、原始输出与结论见 [RESULTS.md](reports/performance/RESULTS.md)，请求体和业务响应校验见 [scripts/wrk.lua](scripts/wrk.lua)。历史 wrk 组关闭消费者，只测发送受理与消息记录查询；报告后半部分另有开启消费者、10ms 模拟渠道的全链路基线与消费优化对照，原始数据和复跑说明见 [e2e/README.md](reports/performance/e2e/README.md)。
 
 ## 联系与 Issues
 

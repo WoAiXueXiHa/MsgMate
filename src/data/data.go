@@ -126,6 +126,9 @@ func (p *Data) GetRetryMQConsumer() mq.Consumer {
 //	@return *Data
 //	@return error
 func NewData(cf *conf.TomlConfig) (result *Data, initErr error) {
+	if err := cf.Consumer.Validate(); err != nil {
+		return nil, err
+	}
 	if cf.Kafka.BatchTimeoutMS < 0 {
 		return nil, fmt.Errorf("Kafka batch_timeout_ms must be nonnegative")
 	}
@@ -201,7 +204,17 @@ func generateConsumer(cf *conf.TomlConfig) map[PriorityEnum]mq.Consumer {
 	consumers := make(map[PriorityEnum]mq.Consumer)
 
 	for _, topicConfig := range cf.Kafka.Topics {
+		settings := cf.Consumer.WithDefaults()
+		workers := settings.Workers
+		if topicConfig.Priority == int(PRIORITY_RETRY) {
+			workers = settings.RetryWorkers
+		}
 		consumer := newKafkaConsumer(cf.Kafka.Brokers, topicConfig.Name, topicConfig.GroupID)
+		consumer.workers = workers
+		consumer.batchWait = time.Duration(settings.KafkaBatchWaitMS) * time.Millisecond
+		if topicConfig.Priority == int(PRIORITY_RETRY) {
+			consumer.retryPause = time.Duration(settings.RetryIntervalMS) * time.Millisecond
+		}
 		if consumer == nil {
 			panic(fmt.Sprintf("nil consumer for %s", topicConfig.Name))
 		}

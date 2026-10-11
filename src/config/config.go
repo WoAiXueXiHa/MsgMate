@@ -23,11 +23,12 @@ func init() {
 
 // TomlConfig 配置
 type TomlConfig struct {
-	Common commonConfig
-	MySQL  mysqlConfig
-	Redis  redisConfig
-	Kafka  kafkaConfig
-	Task   TaskConfig
+	Common   commonConfig
+	MySQL    mysqlConfig
+	Redis    redisConfig
+	Kafka    kafkaConfig
+	Task     TaskConfig
+	Consumer ConsumerConfig
 }
 
 type commonConfig struct {

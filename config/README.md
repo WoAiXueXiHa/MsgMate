@@ -76,3 +76,30 @@ QQ SMTP 主机 `smtp.qq.com` 与端口 `465` 当前固定在源码中，配置�
 ### MySQL连接池
 
 当前源码统一设置最大连接50、最大空闲连接50、连接寿命30秒。连接寿命由依赖的WithMaxIdleTime设置，实际调用SetConnMaxLifetime。空闲连接10→50的查询复测及完整wrk输出见[RESULTS.md](../reports/performance/RESULTS.md)。
+
+### 消费并发与发送保护
+
+新增 `[Consumer]` 配置，默认普通优先级各4个worker、重试1个，MySQL高/中/低批量60/30/30；每个渠道跨优先级最多4次在途发送，可设置 `channel_rate_per_second`（0不限速）。空队列逐步退避、普通队列忙时连续拉取、重试保留1000ms批间隔；Kafka采用整批完成后提交offset。并发消费不保证消息完成顺序，仍只支持单实例恢复。
+
+```toml
+[Consumer]
+workers = 4
+retry_workers = 1
+high_batch = 60
+middle_batch = 30
+low_batch = 30
+retry_batch = 10
+idle_min_ms = 50
+idle_max_ms = 500
+error_backoff_ms = 500
+retry_interval_ms = 1000
+kafka_batch_wait_ms = 5
+channel_concurrency = 4
+channel_rate_per_second = 0
+```
+
+省略或零值采用上述默认值；发送速率0表示不限速。普通/重试worker范围1–32，渠道并发1–64，批量1–1000；空闲等待满足 `1 <= idle_min_ms <= idle_max_ms <= 60000`，错误退避及重试间隔1–60000ms，Kafka填充等待1–1000ms，发送速率0–100000条/s。无效配置拒绝启动。
+
+渠道并发与速率对每个渠道分别生效，跨优先级共享，覆盖普通发送和重试；只在本进程有效，不提供跨实例发送限速。设置 `workers=1`、`retry_workers=1`、`channel_concurrency=1` 可回到顺序处理，但仍使用新版空闲退避。Kafka慢消息会拖住当前批次，提交失败只重试offset，不重复执行该批处理器。
+
+新库已包含队列查询索引 `(status, create_time, id)`。已有数据库部署前先执行 `SHOW INDEX FROM t_msg_queue_low` 等检查四张队列表，仅在索引缺失时按[一次性迁移脚本](../sql/migrations/20261011_consumer_indexes.sql)添加；不要重复执行已有索引的迁移。本次没有自动修改现有业务数据库。

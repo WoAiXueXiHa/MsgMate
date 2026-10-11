@@ -48,7 +48,8 @@ create table `t_msg_queue_low` (
                                 `create_time`         datetime     not null DEFAULT CURRENT_TIMESTAMP                             comment '创建时间',
                                 `modify_time`         datetime     not null DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment '修改时间',
                                 PRIMARY KEY (`id`),
-                                UNIQUE KEY `idx_msgid` (`msg_id`)
+                                UNIQUE KEY `idx_msgid` (`msg_id`),
+                                   KEY `idx_pending_order` (`status`, `create_time`, `id`)
 )ENGINE=InnoDB  default CHARSET=utf8mb4 comment '低优先级消息队列表' ;
 
 create table `t_msg_queue_middle` (
@@ -64,7 +65,8 @@ create table `t_msg_queue_middle` (
                                    `create_time`         datetime     not null DEFAULT CURRENT_TIMESTAMP                             comment '创建时间',
                                    `modify_time`         datetime     not null DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment '修改时间',
                                    PRIMARY KEY (`id`),
-                                   UNIQUE KEY `idx_msgid` (`msg_id`)
+                                   UNIQUE KEY `idx_msgid` (`msg_id`),
+                                   KEY `idx_pending_order` (`status`, `create_time`, `id`)
 )ENGINE=InnoDB  default CHARSET=utf8mb4 comment '中优先级消息队列表' ;
 
 
@@ -82,7 +84,8 @@ create table `t_msg_queue_high` (
                                    `create_time`         datetime     not null DEFAULT CURRENT_TIMESTAMP                             comment '创建时间',
                                    `modify_time`         datetime     not null DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment '修改时间',
                                    PRIMARY KEY (`id`),
-                                   UNIQUE KEY `idx_msgid` (`msg_id`)
+                                   UNIQUE KEY `idx_msgid` (`msg_id`),
+                                   KEY `idx_pending_order` (`status`, `create_time`, `id`)
 )ENGINE=InnoDB  default CHARSET=utf8mb4 comment '高优先级消息队列表' ;
 
 create table `t_msg_queue_retry` (
@@ -98,7 +101,8 @@ create table `t_msg_queue_retry` (
                                    `create_time`         datetime     not null DEFAULT CURRENT_TIMESTAMP                             comment '创建时间',
                                    `modify_time`         datetime     not null DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment '修改时间',
                                    PRIMARY KEY (`id`),
-                                   UNIQUE KEY `idx_msg_id` (`msg_id`)
+                                   UNIQUE KEY `idx_msg_id` (`msg_id`),
+                                   KEY `idx_pending_order` (`status`, `create_time`, `id`)
 )ENGINE=InnoDB  default CHARSET=utf8mb4 comment '重试消息队列表' ;
 
 

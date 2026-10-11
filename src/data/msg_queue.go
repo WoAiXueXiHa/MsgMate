@@ -50,7 +50,7 @@ func (p *MsgQueue) GetMsgList(db *gorm.DB,
 	err := db.
 		Table(p.TableName()+"_"+priorityStr).
 		Where("status = ?", status).
-		Order("create_time").
+		Order("create_time, id").
 		Limit(limit).
 		Find(&msgList).Error
 	if err != nil {

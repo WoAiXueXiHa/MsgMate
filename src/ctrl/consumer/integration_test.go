@@ -33,6 +33,9 @@ type testProc struct{ MsgBase }
 func (p *testProc) SendMsg() error {
 	v, _ := attempts.LoadOrStore(p.To, 0)
 	attempts.Store(p.To, v.(int)+1)
+	if strings.HasPrefix(p.To, "slow-") {
+		time.Sleep(50 * time.Millisecond)
+	}
 	if strings.HasPrefix(p.To, "fail") {
 		return errors.New("controlled channel failure")
 	}
@@ -393,5 +396,117 @@ func TestConcurrentFailureCount(t *testing.T) {
 	}
 	if r := record(t, req.MsgID); r.RetryCount != 8 {
 		t.Fatalf("lost increments: %d", r.RetryCount)
+	}
+}
+
+// Two overlapping readers must conditionally claim each row only once.
+func TestConcurrentMySQLClaimAndTerminalReplay(t *testing.T) {
+	db := data.GetData().GetDB()
+	original := config.Conf.Common.MySQLAsMq
+	config.Conf.Common.MySQLAsMq = true
+	defer func() { config.Conf.Common.MySQLAsMq = original }()
+	requests := make([]*ctrlmodel.SendMsgReq, 0, 24)
+	for i := 0; i < 24; i++ {
+		req, _ := seed(t, "parallel-")
+		requests = append(requests, req)
+		if err := data.Enqueue(db, req); err != nil {
+			t.Fatal(err)
+		}
+	}
+	s := NewMsgConsume()
+	defer s.cancel()
+	var wg sync.WaitGroup
+	errs := make(chan error, 2)
+	other := NewMsgConsume()
+	defer other.cancel()
+	for _, reader := range []*MsgConsume{s, other} {
+		wg.Add(1)
+		go func(reader *MsgConsume) {
+			defer wg.Done()
+			_, err := reader.consumeMySQLMsg(data.PRIORITY_LOW)
+			errs <- err
+		}(reader)
+	}
+	wg.Wait()
+	close(errs)
+	for err := range errs {
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, req := range requests {
+		if record(t, req.MsgID).Status != 2 {
+			t.Fatal("concurrent batch left message pending")
+		}
+		if v, _ := attempts.Load(req.To); v != 1 {
+			t.Fatalf("duplicate channel calls %v", v)
+		}
+		if err := db.Table("t_msg_queue_low").Where("msg_id = ?", req.MsgID).Update("status", data.TASK_STATUS_PENDING).Error; err != nil {
+			t.Fatal(err)
+		}
+	}
+	s.consumeMySQLMsg(data.PRIORITY_LOW)
+	for _, req := range requests {
+		if v, _ := attempts.Load(req.To); v != 1 {
+			t.Fatal("terminal replay called channel again")
+		}
+	}
+}
+
+func TestStopLeavesUnstartedRowsPendingAndRestartCompletes(t *testing.T) {
+	db := data.GetData().GetDB()
+	requests := make([]*ctrlmodel.SendMsgReq, 0, 24)
+	for i := 0; i < 24; i++ {
+		req, _ := seed(t, "slow-")
+		requests = append(requests, req)
+		if err := data.Enqueue(db, req); err != nil {
+			t.Fatal(err)
+		}
+	}
+	s := NewMsgConsume()
+	s.Consume()
+	deadline := time.Now().Add(3 * time.Second)
+	for {
+		if _, ok := attempts.Load(requests[0].To); ok {
+			break
+		}
+		if time.Now().After(deadline) {
+			s.UnlockAll()
+			t.Fatal("consumer did not start")
+		}
+		time.Sleep(time.Millisecond)
+	}
+	s.UnlockAll()
+	pending := 0
+	for _, req := range requests {
+		q, err := data.MsgQueueNsp.Find(db, "low", req.MsgID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if q.Status == int(data.TASK_STATUS_PROCESSING) {
+			t.Fatal("graceful stop stranded a claimed row")
+		}
+		if record(t, req.MsgID).Status == 1 {
+			pending++
+		}
+	}
+	if pending == 0 {
+		t.Fatal("test did not exercise unstarted work")
+	}
+	if err := data.RecoverPending(db, true); err != nil {
+		t.Fatal(err)
+	}
+	restarted := NewMsgConsume()
+	defer restarted.cancel()
+	for i := 0; i < 3; i++ {
+		restarted.consumeMySQLMsg(data.PRIORITY_LOW)
+	}
+	for _, req := range requests {
+		if record(t, req.MsgID).Status != 2 {
+			t.Fatal("restart did not complete work")
+		}
+		if v, _ := attempts.Load(req.To); v != 1 {
+			t.Fatalf("restart duplicate channel calls %v", v)
+		}
 	}
 }
